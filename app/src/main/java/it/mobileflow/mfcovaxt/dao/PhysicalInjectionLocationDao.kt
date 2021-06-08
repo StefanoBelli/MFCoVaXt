@@ -12,4 +12,7 @@ interface PhysicalInjectionLocationDao {
 
     @Query("SELECT * FROM PhysicalInjectionLocation")
     fun getPhysicalInjectionLocations(): Array<PhysicalInjectionLocation>
+
+    @Query("DELETE FROM PhysicalInjectionLocation")
+    fun deleteTable(): Int
 }

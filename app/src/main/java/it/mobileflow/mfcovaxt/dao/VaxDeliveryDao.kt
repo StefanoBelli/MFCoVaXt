@@ -12,4 +12,7 @@ interface VaxDeliveryDao {
 
     @Query("SELECT * FROM VaxDelivery")
     fun getVaxDeliveries(): Array<VaxDelivery>
+
+    @Query("DELETE FROM VaxDelivery")
+    fun deleteTable(): Int
 }

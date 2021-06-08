@@ -12,4 +12,7 @@ interface PartOfVaxablePopulationDao {
 
     @Query("SELECT * FROM PartOfVaxablePopulation")
     fun getWholeVaxablePopulation(): Array<PartOfVaxablePopulation>
+
+    @Query("DELETE FROM PartOfVaxablePopulation")
+    fun deleteTable(): Int
 }

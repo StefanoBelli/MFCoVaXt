@@ -7,10 +7,10 @@ import java.sql.Timestamp
 @Entity
 data class AppOwnLastUpdate(
     @PrimaryKey val index : Int,
-    val partOfVaxablePopulation : Timestamp,
-    val physicalInjectionLocation : Timestamp,
-    val vaxDelivery: Timestamp,
-    val vaxInjection: Timestamp,
-    val vaxInjectionsSummaryByAgeRange: Timestamp,
-    val vaxInjectionsSummaryByDayAndArea: Timestamp,
-    val vaxStatsSummaryByArea: Timestamp)
+    var partOfVaxablePopulation : Timestamp,
+    var physicalInjectionLocation : Timestamp,
+    var vaxDelivery: Timestamp,
+    var vaxInjection: Timestamp,
+    var vaxInjectionsSummaryByAgeRange: Timestamp,
+    var vaxInjectionsSummaryByDayAndArea: Timestamp,
+    var vaxStatsSummaryByArea: Timestamp)

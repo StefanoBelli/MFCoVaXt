@@ -12,4 +12,7 @@ interface VaxInjectionsSummaryByDayAndAreaDao {
 
     @Query("SELECT * FROM VaxInjectionsSummaryByDayAndArea")
     fun getVaxInjectionsSummariesByDayAndArea(): Array<VaxInjectionsSummaryByDayAndArea>
+
+    @Query("DELETE FROM VaxInjectionsSummaryByDayAndArea")
+    fun deleteTable(): Int
 }

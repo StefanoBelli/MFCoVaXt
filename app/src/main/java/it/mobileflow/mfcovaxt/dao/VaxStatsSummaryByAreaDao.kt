@@ -12,4 +12,7 @@ interface VaxStatsSummaryByAreaDao {
 
     @Query("SELECT * FROM VaxStatsSummaryByArea")
     fun getVaxStatsSummariesByArea(): Array<VaxStatsSummaryByArea>
+
+    @Query("DELETE FROM VaxStatsSummaryByArea")
+    fun deleteTable(): Int
 }

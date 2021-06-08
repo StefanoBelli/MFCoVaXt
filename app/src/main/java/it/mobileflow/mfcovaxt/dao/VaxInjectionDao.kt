@@ -12,4 +12,7 @@ interface VaxInjectionDao {
 
     @Query("SELECT * FROM VaxInjection")
     fun getVaxInjections(): Array<VaxInjection>
+
+    @Query("DELETE FROM VaxInjection")
+    fun deleteTable(): Int
 }

@@ -10,4 +10,5 @@ import java.sql.Timestamp
  */
 @Entity
 data class LastUpdateDataset (
-    @PrimaryKey val lastUpdate : Timestamp)
+    @PrimaryKey val index : Int,
+    val lastUpdate : Timestamp)

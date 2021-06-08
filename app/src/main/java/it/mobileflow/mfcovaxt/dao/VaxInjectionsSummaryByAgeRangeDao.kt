@@ -12,4 +12,7 @@ interface VaxInjectionsSummaryByAgeRangeDao {
 
     @Query("SELECT * FROM VaxInjectionsSummaryByAgeRange")
     fun getVaxInjectionsSummariesByAgeRange(): Array<VaxInjectionsSummaryByAgeRange>
+
+    @Query("DELETE FROM VaxInjectionsSummaryByAgeRange")
+    fun deleteTable(): Int
 }
