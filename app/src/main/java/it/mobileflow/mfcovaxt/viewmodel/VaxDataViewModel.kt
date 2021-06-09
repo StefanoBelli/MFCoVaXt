@@ -1,23 +1,28 @@
 package it.mobileflow.mfcovaxt.viewmodel
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.entity.*
+import it.mobileflow.mfcovaxt.http.CsvRequest
 import it.mobileflow.mfcovaxt.http.Http
 import it.mobileflow.mfcovaxt.listener.OnGenericListener
 import it.mobileflow.mfcovaxt.util.EzDateParser
-import org.json.JSONObject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.apache.commons.csv.CSVRecord
 import java.sql.Timestamp
-import java.time.LocalDateTime
 import java.util.*
 
-class VaxDataViewModel(private val db : VaxInjectionsStatsDatabase) : ViewModel() {
+
+class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel() {
     enum class VaxData {
         PARTS_OF_VAXABLE_POPULATION,
         PHYSICAL_INJECTION_LOCATIONS,
@@ -28,22 +33,44 @@ class VaxDataViewModel(private val db : VaxInjectionsStatsDatabase) : ViewModel(
         VAX_STATS_SUMMARIES_BY_AREA
     }
 
-    private val urls = mapOf(
-        VaxData.PARTS_OF_VAXABLE_POPULATION to
-                "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/platea.csv",
-        VaxData.PHYSICAL_INJECTION_LOCATIONS to
-                "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/punti-somministrazione-tipologia.csv",
-        VaxData.VAX_DELIVERIES to
-                "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv",
-        VaxData.VAX_INJECTIONS to
-                "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv",
-        VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE to
-                "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/anagrafica-vaccini-summary-latest.csv",
-        VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA to
-                "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-summary-latest.csv",
-        VaxData.VAX_STATS_SUMMARIES_BY_AREA to
-                "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/vaccini-summary-latest.csv"
-    )
+    companion object {
+        private val urls = mapOf(
+                VaxData.PARTS_OF_VAXABLE_POPULATION to
+                        "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/platea.csv",
+                VaxData.PHYSICAL_INJECTION_LOCATIONS to
+                        "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/punti-somministrazione-tipologia.csv",
+                VaxData.VAX_DELIVERIES to
+                        "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv",
+                VaxData.VAX_INJECTIONS to
+                        "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv",
+                VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE to
+                        "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/anagrafica-vaccini-summary-latest.csv",
+                VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA to
+                        "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-summary-latest.csv",
+                VaxData.VAX_STATS_SUMMARIES_BY_AREA to
+                        "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/vaccini-summary-latest.csv")
+
+        private const val LAST_UPDATE_DATASET_URL =
+                "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/last-update-dataset.json"
+    }
+
+    private val shouldUpdateVaxData = mutableMapOf(
+            VaxData.PARTS_OF_VAXABLE_POPULATION to true,
+            VaxData.PHYSICAL_INJECTION_LOCATIONS to true,
+            VaxData.VAX_DELIVERIES to true,
+            VaxData.VAX_INJECTIONS to true,
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE to true,
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA to true,
+            VaxData.VAX_STATS_SUMMARIES_BY_AREA to true)
+
+    private val shouldReloadVaxData = mutableMapOf(
+            VaxData.PARTS_OF_VAXABLE_POPULATION to true,
+            VaxData.PHYSICAL_INJECTION_LOCATIONS to true,
+            VaxData.VAX_DELIVERIES to true,
+            VaxData.VAX_INJECTIONS to true,
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE to true,
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA to true,
+            VaxData.VAX_STATS_SUMMARIES_BY_AREA to true)
 
     val partsOfVaxablePopulation = MutableLiveData<Array<PartOfVaxablePopulation>>()
     val physicalInjectionLocations = MutableLiveData<Array<PhysicalInjectionLocation>>()
@@ -55,139 +82,179 @@ class VaxDataViewModel(private val db : VaxInjectionsStatsDatabase) : ViewModel(
         MutableLiveData<Array<VaxInjectionsSummaryByDayAndArea>>()
     val vaxStatsSummariesByArea = MutableLiveData<Array<VaxStatsSummaryByArea>>()
 
-    /**
-     * algorithm:
-     *  (1) fetch "latest_update_dataset.json" from remote source
-     *  (2) fetch latest_update from local source
-     *  (2.1) if it is not available then store it and
-     *      enable this algorithm to fetch updates for any vax data
-     *  (2.2) if it is available from local source, then remote.data > local.data enables this
-     *        algorithm to fetch updates for any vax data, store remote.data
-     *  (3) check which type_of_data user wants to fetch
-     *  (4) check if local.type_of_data.latest_update is available
-     *  (4.1) if available then,
-     *        if local.type_of_data.latest_update < local.latest_update then
-     *          fetch from remote source
-     *          clear db table
-     *          populate table with new records
-     *          local.type_of_data.latest_update := now
-     *  (4.2) otherwise,
-     *          fetch from remote source
-     *          clear db table
-     *          populate table with new records
-     *  (5) TERMINATE ALGORITHM BY UPDATING MutableLiveData, any Observer attached will be notified
-     */
-    fun updateData(vaxData: VaxData, context: Context, errorListener: OnGenericListener<VolleyError>) {
+    private var isUpdatingLastUpdateDataset = false
+
+    /* public */
+    fun lastUpdateDataset(
+            context: Context,
+            doneListener: OnGenericListener<Boolean>,
+            errorListener: OnGenericListener<VolleyError>) {
+        isUpdatingLastUpdateDataset = true
         Http.getInstance(context).addToRequestQueue(
-                JsonObjectRequest(Request.Method.GET, urls[vaxData], null,
-                        { response -> actualUpdateData(vaxData, response) },
-                        { error -> errorListener.onEvent(error) }))
+                JsonObjectRequest(Request.Method.GET, LAST_UPDATE_DATASET_URL, null,
+                        { response ->
+                            updateLastUpdateDataset(response.getString("ultimo_aggiornamento"))
+                            isUpdatingLastUpdateDataset = false
+                            doneListener.onEvent(true)
+                        },
+                        { error ->
+                            isUpdatingLastUpdateDataset = false
+                            errorListener.onEvent(error)
+                        }))
     }
 
-    private fun actualUpdateData(vaxData: VaxData, remoteLatestUpdate: JSONObject) {
-        val remoteLastUpdateDate =
-            EzDateParser.parse(remoteLatestUpdate.getString("ultimo_aggiornamento"))
+    private fun updateLastUpdateDataset(lastUpdateIso8601: String) {
+        val lastUpdate = EzDateParser.parse(lastUpdateIso8601)
 
         val lastUpdateDatasetDao = db.getLastUpdateDatasetDao()
         val lastUpdateDataset = lastUpdateDatasetDao.getLastUpdateDataset()
-        var mustFetchFromRemote = false
 
         if(lastUpdateDataset.isEmpty()) {
             lastUpdateDatasetDao.insert(
                     LastUpdateDataset(0,
-                            Timestamp(remoteLastUpdateDate.time)))
-            mustFetchFromRemote = true
+                            Timestamp(lastUpdate.time)))
+            for(key in shouldUpdateVaxData.keys) {
+                shouldUpdateVaxData[key] = true
+            }
         } else {
             val localLastUpdateDate = Date(lastUpdateDataset[0].lastUpdate.time)
-            if(remoteLastUpdateDate.after(localLastUpdateDate)) {
+            if (lastUpdate.after(localLastUpdateDate)) {
                 lastUpdateDatasetDao.update(
                         LastUpdateDataset(0,
-                                Timestamp(remoteLastUpdateDate.time)))
-                mustFetchFromRemote = true
+                                Timestamp(lastUpdate.time)))
+                for(key in shouldUpdateVaxData.keys) {
+                    shouldUpdateVaxData[key] = true
+                }
             }
         }
-
-        if(!mustFetchFromRemote &&
-                queryVaxDataAppLastUpdate(vaxData).before(remoteLastUpdateDate)) {
-            mustFetchFromRemote = true
-        }
-
-        fetchData(vaxData, mustFetchFromRemote)
     }
 
-    private fun fetchData(vaxData: VaxData, fetchRemote: Boolean) {
-        if(fetchRemote) {
-
-        } else {
-
-        }
-    }
-
-    private fun queryVaxDataAppLastUpdate(vaxData : VaxData) : Date {
-        val appOwnLastUpdate = db.getAppOwnLastUpdateDao().getAppOwnLastUpdate()
-        if(appOwnLastUpdate.isEmpty()) {
-            return Date(0)
-        }
-
-        val ts = when(vaxData) {
-            VaxData.PARTS_OF_VAXABLE_POPULATION ->
-                appOwnLastUpdate[0].partOfVaxablePopulation
-            VaxData.PHYSICAL_INJECTION_LOCATIONS ->
-                appOwnLastUpdate[0].physicalInjectionLocation
-            VaxData.VAX_DELIVERIES ->
-                appOwnLastUpdate[0].vaxDelivery
-            VaxData.VAX_INJECTIONS ->
-                appOwnLastUpdate[0].vaxInjection
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE ->
-                appOwnLastUpdate[0].vaxInjectionsSummaryByAgeRange
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA ->
-                appOwnLastUpdate[0].vaxInjectionsSummaryByDayAndArea
-            VaxData.VAX_STATS_SUMMARIES_BY_AREA ->
-                appOwnLastUpdate[0].vaxStatsSummaryByArea
-        }
-
-        return Date(ts.time)
-    }
-
-    private fun updateOrInsertVaxDataAppLastUpdate(vaxData: VaxData, datetime: Timestamp) {
-        val dao = db.getAppOwnLastUpdateDao()
-        val appOwnLastUpdates = dao.getAppOwnLastUpdate()
-        if(appOwnLastUpdates.isEmpty()) {
-            dao.insert(assignAppOwnLastUpdate(vaxData, datetime, buildEmptyAppOwnLastUpdate()))
-        } else {
-            dao.update(assignAppOwnLastUpdate(vaxData, datetime, appOwnLastUpdates[0]))
-        }
-    }
-
-    private fun assignAppOwnLastUpdate(
+    /* public */
+    fun populateVaxData(
             vaxData: VaxData,
-            datetime: Timestamp,
-            o: AppOwnLastUpdate)
-    : AppOwnLastUpdate{
-
-        when(vaxData) {
-            VaxData.PARTS_OF_VAXABLE_POPULATION ->
-                o.partOfVaxablePopulation = datetime
-            VaxData.PHYSICAL_INJECTION_LOCATIONS ->
-                o.physicalInjectionLocation = datetime
-            VaxData.VAX_DELIVERIES ->
-                o.vaxDelivery = datetime
-            VaxData.VAX_INJECTIONS ->
-                o.vaxInjection = datetime
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE ->
-                o.vaxInjectionsSummaryByAgeRange = datetime
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA ->
-                o.vaxInjectionsSummaryByDayAndArea = datetime
-            VaxData.VAX_STATS_SUMMARIES_BY_AREA ->
-                o.vaxStatsSummaryByArea = datetime
+            context: Context,
+            errorListener: OnGenericListener<VolleyError>) {
+        if(isNetworkConnected(context)) {
+            if (!isUpdatingLastUpdateDataset && shouldUpdateVaxData[vaxData]!!) {
+                Http.getInstance(context).addToRequestQueue(CsvRequest(urls[vaxData],
+                        { response -> updateVaxData(vaxData, response) },
+                        { error -> errorListener.onEvent(error) }))
+            }
+        } else {
+            if(shouldReloadVaxData[vaxData]!!) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    loadVaxDataFromLocalDb(vaxData)
+                }
+            }
         }
-
-        return o
     }
 
-    private fun buildEmptyAppOwnLastUpdate() : AppOwnLastUpdate {
-        return AppOwnLastUpdate(
-                0, Timestamp(0), Timestamp(0),Timestamp(0),
-                Timestamp(0), Timestamp(0), Timestamp(0), Timestamp(0))
+    /**
+     * UPDATE VAX DATA FROM EXTERNAL SOURCE
+     */
+    private fun updateVaxData(vaxData: VaxData, resp: List<CSVRecord>) {
+        when (vaxData) {
+            VaxData.PARTS_OF_VAXABLE_POPULATION -> updatePartsOfVaxablePopulation(resp)
+            VaxData.PHYSICAL_INJECTION_LOCATIONS -> updatePhysicalInjectionLocations(resp)
+            VaxData.VAX_DELIVERIES -> updateVaxDeliveries(resp)
+            VaxData.VAX_INJECTIONS -> updateVaxInjections(resp)
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE -> updateVaxInjectionSummariesByAgeRange(resp)
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA -> updateVaxInjectionSummariesByDayAndArea(resp)
+            VaxData.VAX_STATS_SUMMARIES_BY_AREA -> updateVaxStatsSummariesByArea(resp)
+        }
+
+        shouldUpdateVaxData[vaxData] = false
+        shouldReloadVaxData[vaxData] = true
+
+        loadVaxDataFromLocalDb(vaxData)
+    }
+
+    private fun updateVaxStatsSummariesByArea(resp: List<CSVRecord>) {
+
+    }
+
+    private fun updateVaxInjectionSummariesByDayAndArea(resp: List<CSVRecord>) {
+
+    }
+
+    private fun updateVaxInjectionSummariesByAgeRange(resp: List<CSVRecord>) {
+
+    }
+
+    private fun updateVaxInjections( resp: List<CSVRecord>) {
+
+    }
+
+    private fun updateVaxDeliveries(resp: List<CSVRecord>) {
+
+    }
+
+    private fun updatePhysicalInjectionLocations(resp: List<CSVRecord>) {
+
+    }
+
+    private fun updatePartsOfVaxablePopulation(resp: List<CSVRecord>) {
+
+    }
+
+    /**
+     * LOAD VAX DATA FROM LOCAL SOURCE
+     */
+    private fun loadVaxDataFromLocalDb(vaxData: VaxData) {
+        when (vaxData) {
+            VaxData.PARTS_OF_VAXABLE_POPULATION -> loadPartsOfVaxablePopulation()
+            VaxData.PHYSICAL_INJECTION_LOCATIONS -> loadPhysicalInjectionLocations()
+            VaxData.VAX_DELIVERIES -> loadVaxDeliveries()
+            VaxData.VAX_INJECTIONS -> loadVaxInjections()
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE -> loadVaxInjectionSummariesByAgeRange()
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA -> loadVaxInjectionSummariesByDayAndArea()
+            VaxData.VAX_STATS_SUMMARIES_BY_AREA -> loadVaxStatsSummariesByArea()
+        }
+
+        shouldReloadVaxData[vaxData] = false
+    }
+
+    private fun loadVaxStatsSummariesByArea() {
+
+    }
+
+    private fun loadVaxInjectionSummariesByDayAndArea() {
+
+    }
+
+    private fun loadVaxInjectionSummariesByAgeRange() {
+
+    }
+
+    private fun loadVaxInjections() {
+
+    }
+
+    private fun loadVaxDeliveries() {
+
+    }
+
+    private fun loadPhysicalInjectionLocations() {
+
+    }
+
+    private fun loadPartsOfVaxablePopulation() {
+
+    }
+
+    /**
+     * util function
+     */
+    private fun isNetworkConnected(context: Context) : Boolean {
+        var result = false
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        cm.getNetworkCapabilities(cm.activeNetwork)?.run {
+            result = hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                    hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+        }
+
+        return result
     }
 }

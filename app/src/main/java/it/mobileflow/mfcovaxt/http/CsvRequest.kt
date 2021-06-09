@@ -10,9 +10,9 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 class CsvRequest(
-    url: String,
-    private val listener: Response.Listener<List<CSVRecord>>,
-    errorListener: Response.ErrorListener
+        url: String?,
+        private val listener: Response.Listener<List<CSVRecord>>,
+        errorListener: Response.ErrorListener
 ) : Request<List<CSVRecord>>(Method.GET, url, errorListener) {
     override fun parseNetworkResponse(response: NetworkResponse?): Response<List<CSVRecord>> {
         return Response.success(
