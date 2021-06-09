@@ -89,18 +89,21 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
             context: Context,
             doneListener: OnGenericListener<Boolean>,
             errorListener: OnGenericListener<VolleyError>) {
-        isUpdatingLastUpdateDataset = true
-        Http.getInstance(context).addToRequestQueue(
-                JsonObjectRequest(Request.Method.GET, LAST_UPDATE_DATASET_URL, null,
-                        { response ->
-                            updateLastUpdateDataset(response.getString("ultimo_aggiornamento"))
-                            isUpdatingLastUpdateDataset = false
-                            doneListener.onEvent(true)
-                        },
-                        { error ->
-                            isUpdatingLastUpdateDataset = false
-                            errorListener.onEvent(error)
-                        }))
+        if(!isUpdatingLastUpdateDataset) {
+            isUpdatingLastUpdateDataset = true
+            Http.getInstance(context).addToRequestQueue(
+                    JsonObjectRequest(Request.Method.GET, LAST_UPDATE_DATASET_URL, null,
+                            { response ->
+                                updateLastUpdateDataset(
+                                        response.getString("ultimo_aggiornamento"))
+                                isUpdatingLastUpdateDataset = false
+                                doneListener.onEvent(true)
+                            },
+                            { error ->
+                                isUpdatingLastUpdateDataset = false
+                                errorListener.onEvent(error)
+                            }))
+        }
     }
 
     private fun updateLastUpdateDataset(lastUpdateIso8601: String) {
@@ -154,13 +157,20 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
      */
     private fun updateVaxData(vaxData: VaxData, resp: List<CSVRecord>) {
         when (vaxData) {
-            VaxData.PARTS_OF_VAXABLE_POPULATION -> updatePartsOfVaxablePopulation(resp)
-            VaxData.PHYSICAL_INJECTION_LOCATIONS -> updatePhysicalInjectionLocations(resp)
-            VaxData.VAX_DELIVERIES -> updateVaxDeliveries(resp)
-            VaxData.VAX_INJECTIONS -> updateVaxInjections(resp)
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE -> updateVaxInjectionSummariesByAgeRange(resp)
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA -> updateVaxInjectionSummariesByDayAndArea(resp)
-            VaxData.VAX_STATS_SUMMARIES_BY_AREA -> updateVaxStatsSummariesByArea(resp)
+            VaxData.PARTS_OF_VAXABLE_POPULATION ->
+                updatePartsOfVaxablePopulation(resp)
+            VaxData.PHYSICAL_INJECTION_LOCATIONS ->
+                updatePhysicalInjectionLocations(resp)
+            VaxData.VAX_DELIVERIES ->
+                updateVaxDeliveries(resp)
+            VaxData.VAX_INJECTIONS ->
+                updateVaxInjections(resp)
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE ->
+                updateVaxInjectionSummariesByAgeRange(resp)
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA ->
+                updateVaxInjectionSummariesByDayAndArea(resp)
+            VaxData.VAX_STATS_SUMMARIES_BY_AREA ->
+                updateVaxStatsSummariesByArea(resp)
         }
 
         shouldUpdateVaxData[vaxData] = false
@@ -202,13 +212,20 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
      */
     private fun loadVaxDataFromLocalDb(vaxData: VaxData) {
         when (vaxData) {
-            VaxData.PARTS_OF_VAXABLE_POPULATION -> loadPartsOfVaxablePopulation()
-            VaxData.PHYSICAL_INJECTION_LOCATIONS -> loadPhysicalInjectionLocations()
-            VaxData.VAX_DELIVERIES -> loadVaxDeliveries()
-            VaxData.VAX_INJECTIONS -> loadVaxInjections()
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE -> loadVaxInjectionSummariesByAgeRange()
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA -> loadVaxInjectionSummariesByDayAndArea()
-            VaxData.VAX_STATS_SUMMARIES_BY_AREA -> loadVaxStatsSummariesByArea()
+            VaxData.PARTS_OF_VAXABLE_POPULATION ->
+                loadPartsOfVaxablePopulation()
+            VaxData.PHYSICAL_INJECTION_LOCATIONS ->
+                loadPhysicalInjectionLocations()
+            VaxData.VAX_DELIVERIES ->
+                loadVaxDeliveries()
+            VaxData.VAX_INJECTIONS ->
+                loadVaxInjections()
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE ->
+                loadVaxInjectionSummariesByAgeRange()
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA ->
+                loadVaxInjectionSummariesByDayAndArea()
+            VaxData.VAX_STATS_SUMMARIES_BY_AREA ->
+                loadVaxStatsSummariesByArea()
         }
 
         shouldReloadVaxData[vaxData] = false
