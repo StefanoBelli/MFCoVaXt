@@ -12,7 +12,7 @@ data class VaxStatsSummaryByArea (
     @PrimaryKey val area : String,
     val totalInjs : Int,
     val totalDelivVaxes : Int,
-    val percInjs : Int,
+    val percInjs : Float,
     val nuts1Code : String,
     val nuts2Code : String,
     val istatAreaCode : Int,

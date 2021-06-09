@@ -10,7 +10,6 @@ import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
 import it.mobileflow.mfcovaxt.listener.OnGenericListener
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
-import javax.xml.transform.ErrorListener
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -43,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.button.setOnClickListener {
-
             Toast.makeText(baseContext, "clicked", Toast.LENGTH_SHORT).show()
             vaxDataViewModel.populateVaxData(
                 VaxDataViewModel.VaxData.VAX_DELIVERIES,
@@ -53,6 +51,60 @@ class MainActivity : AppCompatActivity() {
 
                     }
                 })
+
+            vaxDataViewModel.populateVaxData(
+                VaxDataViewModel.VaxData.VAX_INJECTIONS,
+                this,
+                object : OnGenericListener<VolleyError> {
+                    override fun onEvent(arg: VolleyError) {
+
+                    }
+                })
+
+            vaxDataViewModel.populateVaxData(
+                    VaxDataViewModel.VaxData.PARTS_OF_VAXABLE_POPULATION,
+                    this,
+                    object : OnGenericListener<VolleyError> {
+                        override fun onEvent(arg: VolleyError) {
+
+                        }
+                    })
+
+            vaxDataViewModel.populateVaxData(
+                    VaxDataViewModel.VaxData.PHYSICAL_INJECTION_LOCATIONS,
+                    this,
+                    object : OnGenericListener<VolleyError> {
+                        override fun onEvent(arg: VolleyError) {
+
+                        }
+                    })
+
+            vaxDataViewModel.populateVaxData(
+                    VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE,
+                    this,
+                    object : OnGenericListener<VolleyError> {
+                        override fun onEvent(arg: VolleyError) {
+
+                        }
+                    })
+
+            vaxDataViewModel.populateVaxData(
+                    VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA,
+                    this,
+                    object : OnGenericListener<VolleyError> {
+                        override fun onEvent(arg: VolleyError) {
+
+                        }
+                    })
+
+            vaxDataViewModel.populateVaxData(
+                    VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA,
+                    this,
+                    object : OnGenericListener<VolleyError> {
+                        override fun onEvent(arg: VolleyError) {
+
+                        }
+                    })
         }
     }
 }

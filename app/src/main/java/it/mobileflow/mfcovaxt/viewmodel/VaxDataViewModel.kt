@@ -1,7 +1,6 @@
 package it.mobileflow.mfcovaxt.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -92,7 +91,7 @@ class VaxDataViewModel : ViewModel() {
             appContext: Context,
             doneListener: OnGenericListener<Boolean>,
             errorListener: OnGenericListener<VolleyError>) {
-        if(!isUpdatingLastUpdateDataset) {
+        if(!isUpdatingLastUpdateDataset && EzNetwork.connected(appContext)) {
             isUpdatingLastUpdateDataset = true // other call attempt are locked out [main thread]
             Http.getInstance(appContext).addToRequestQueue(
                     JsonObjectRequest(Request.Method.GET, LAST_UPDATE_DATASET_URL, null,
@@ -214,7 +213,7 @@ class VaxDataViewModel : ViewModel() {
                             resp[i].get(0),
                             Integer.parseInt(resp[i].get(1)),
                             Integer.parseInt(resp[i].get(2)),
-                            Integer.parseInt(resp[i].get(3)),
+                            resp[i].get(3).toFloat(),
                             resp[i].get(5),
                             resp[i].get(6),
                             Integer.parseInt(resp[i].get(7)),
@@ -241,11 +240,11 @@ class VaxDataViewModel : ViewModel() {
                             Integer.parseInt(resp[i].get(3)),
                             Integer.parseInt(resp[i].get(4)),
                             Integer.parseInt(resp[i].get(5)),
-                            Integer.parseInt(resp[i].get(7)),
+                            Integer.parseInt(resp[i].get(6)),
+                            resp[i].get(7),
                             resp[i].get(8),
-                            resp[i].get(9),
-                            Integer.parseInt(resp[i].get(10)),
-                            resp[i].get(11)
+                            Integer.parseInt(resp[i].get(9)),
+                            resp[i].get(10)
                         )
                     )
                 }
@@ -337,7 +336,7 @@ class VaxDataViewModel : ViewModel() {
             for (i in 1 until resp.size) {
                 withContext(Dispatchers.IO) {
                     insert(
-                        PhysicalInjectionLocation(
+                        PhysicalInjectionLocation(0,
                             resp[i].get(0),
                             resp[i].get(1),
                             resp[i].get(2),
