@@ -1,7 +1,6 @@
 package it.mobileflow.mfcovaxt.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import java.sql.Timestamp
 
 /**
@@ -10,15 +9,14 @@ import java.sql.Timestamp
  */
 @Entity
 data class VaxInjection (
-    @PrimaryKey val index : Int,
     val area : String,
     val vaxName : String,
     val injDate : Timestamp,
     val ageRange : String,
-    val male : Boolean,
-    val female : Boolean,
-    val firstInj : Boolean,
-    val secondInj : Boolean,
+    val male : Int,
+    val female : Int,
+    val firstInj : Int,
+    val secondInj : Int,
     val nuts1Code : String,
     val nuts2Code : String,
     val istatAreaCode : Int,

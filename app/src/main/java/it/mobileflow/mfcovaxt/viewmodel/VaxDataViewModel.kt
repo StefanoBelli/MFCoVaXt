@@ -1,8 +1,6 @@
 package it.mobileflow.mfcovaxt.viewmodel
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +13,7 @@ import it.mobileflow.mfcovaxt.http.CsvRequest
 import it.mobileflow.mfcovaxt.http.Http
 import it.mobileflow.mfcovaxt.listener.OnGenericListener
 import it.mobileflow.mfcovaxt.util.EzDateParser
+import it.mobileflow.mfcovaxt.util.EzNetwork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.apache.commons.csv.CSVRecord
@@ -88,12 +87,12 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
      * (assume) called *only* from main thread
      */
     fun lastUpdateDataset(
-            context: Context,
+            appContext: Context,
             doneListener: OnGenericListener<Boolean>,
             errorListener: OnGenericListener<VolleyError>) {
         if(!isUpdatingLastUpdateDataset) {
             isUpdatingLastUpdateDataset = true // other call attempt are locked out [main thread]
-            Http.getInstance(context).addToRequestQueue(
+            Http.getInstance(appContext).addToRequestQueue(
                     JsonObjectRequest(Request.Method.GET, LAST_UPDATE_DATASET_URL, null,
                             { response ->
                                 updateLastUpdateDataset(
@@ -141,14 +140,14 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
      */
     fun populateVaxData(
             vaxData: VaxData,
-            context: Context,
+            appContext: Context,
             errorListener: OnGenericListener<VolleyError>
     ) {
-        if(isNetworkConnected(context) && !isUpdatingLastUpdateDataset &&
+        if(EzNetwork.connected(appContext) && !isUpdatingLastUpdateDataset &&
                 shouldUpdateVaxData[vaxData]!!) {
             shouldUpdateVaxData[vaxData] = false // immediate locking from [main] thread
-            Http.getInstance(context).addToRequestQueue(CsvRequest(urls[vaxData],
-                    { response -> updateVaxData(vaxData, response) },
+            Http.getInstance(appContext).addToRequestQueue(CsvRequest(urls[vaxData],
+                    { response -> updateVaxData(vaxData, response, appContext) },
                     { error ->
                         errorListener.onEvent(error)
                         shouldUpdateVaxData[vaxData] = true // unlocking from another thread
@@ -164,20 +163,20 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
     /**
      * UPDATE VAX DATA FROM EXTERNAL SOURCE
      */
-    private fun updateVaxData(vaxData: VaxData, resp: List<CSVRecord>) {
+    private fun updateVaxData(vaxData: VaxData, resp: List<CSVRecord>, context: Context) {
         when (vaxData) {
             VaxData.PARTS_OF_VAXABLE_POPULATION ->
                 updatePartsOfVaxablePopulation(resp)
             VaxData.PHYSICAL_INJECTION_LOCATIONS ->
                 updatePhysicalInjectionLocations(resp)
             VaxData.VAX_DELIVERIES ->
-                updateVaxDeliveries(resp)
+                updateVaxDeliveries(resp, context)
             VaxData.VAX_INJECTIONS ->
-                updateVaxInjections(resp)
+                updateVaxInjections(resp, context)
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE ->
                 updateVaxInjectionSummariesByAgeRange(resp)
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA ->
-                updateVaxInjectionSummariesByDayAndArea(resp)
+                updateVaxInjectionSummariesByDayAndArea(resp, context)
             VaxData.VAX_STATS_SUMMARIES_BY_AREA ->
                 updateVaxStatsSummariesByArea(resp)
         }
@@ -189,31 +188,122 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
     }
 
     private fun updateVaxStatsSummariesByArea(resp: List<CSVRecord>) {
-
+        db.getVaxStatsSummaryByAreaDao().apply {
+            deleteTable()
+            for(i in 1 until resp.size) {
+                insert(VaxStatsSummaryByArea(
+                        resp[i].get(0),
+                        Integer.parseInt(resp[i].get(1)),
+                        Integer.parseInt(resp[i].get(2)),
+                        Integer.parseInt(resp[i].get(3)),
+                        resp[i].get(5),
+                        resp[i].get(6),
+                        Integer.parseInt(resp[i].get(7)),
+                        resp[i].get(8)))
+            }
+        }
     }
 
-    private fun updateVaxInjectionSummariesByDayAndArea(resp: List<CSVRecord>) {
-
+    private fun updateVaxInjectionSummariesByDayAndArea(resp: List<CSVRecord>, context: Context) {
+        db.getVaxInjectionsSummaryByDayAndAreaDao().apply {
+            deleteTable()
+            for(i in 1 until resp.size) {
+                insert(VaxInjectionsSummaryByDayAndArea(
+                        resp[i].get(1),
+                        Timestamp(EzDateParser.parseDateOnlyGetTime(resp[i].get(0), context)),
+                        Integer.parseInt(resp[i].get(2)),
+                        Integer.parseInt(resp[i].get(3)),
+                        Integer.parseInt(resp[i].get(4)),
+                        Integer.parseInt(resp[i].get(5)),
+                        Integer.parseInt(resp[i].get(7)),
+                        resp[i].get(8),
+                        resp[i].get(9),
+                        Integer.parseInt(resp[i].get(10)),
+                        resp[i].get(11)))
+            }
+        }
     }
 
     private fun updateVaxInjectionSummariesByAgeRange(resp: List<CSVRecord>) {
-
+        db.getVaxInjectionsSummaryByAgeRangeDao().apply {
+            deleteTable()
+            for(i in 1 until resp.size) {
+                insert(VaxInjectionsSummaryByAgeRange(
+                        resp[i].get(0),
+                        Integer.parseInt(resp[i].get(1)),
+                        Integer.parseInt(resp[i].get(2)),
+                        Integer.parseInt(resp[i].get(3)),
+                        Integer.parseInt(resp[i].get(4)),
+                        Integer.parseInt(resp[i].get(5))))
+            }
+        }
     }
 
-    private fun updateVaxInjections( resp: List<CSVRecord>) {
-
+    private fun updateVaxInjections(resp: List<CSVRecord>, context: Context) {
+        db.getVaxInjectionDao().apply {
+            deleteTable()
+            for(i in 1 until resp.size) {
+                insert(VaxInjection(
+                        resp[i].get(2),
+                        resp[i].get(1),
+                        Timestamp(EzDateParser.parseDateOnlyGetTime(resp[i].get(0), context)),
+                        resp[i].get(3),
+                        Integer.parseInt(resp[i].get(4)),
+                        Integer.parseInt(resp[i].get(5)),
+                        Integer.parseInt(resp[i].get(6)),
+                        Integer.parseInt(resp[i].get(7)),
+                        resp[i].get(8),
+                        resp[i].get(9),
+                        Integer.parseInt(resp[i].get(10)),
+                        resp[i].get(11)))
+            }
+        }
     }
 
-    private fun updateVaxDeliveries(resp: List<CSVRecord>) {
-
+    private fun updateVaxDeliveries(resp: List<CSVRecord>, context: Context) {
+        db.getVaxDeliveryDao().apply {
+            deleteTable()
+            for (i in 1 until resp.size) {
+                insert(VaxDelivery(
+                        resp[i].get(0),
+                        resp[i].get(1),
+                        Timestamp(EzDateParser.parseDateOnlyGetTime(resp[i].get(3), context)),
+                        Integer.parseInt(resp[i].get(2)),
+                        resp[i].get(4),
+                        resp[i].get(5),
+                        Integer.parseInt(resp[i].get(6)),
+                        resp[i].get(7)))
+            }
+        }
     }
 
     private fun updatePhysicalInjectionLocations(resp: List<CSVRecord>) {
-
+        db.getPhysicalInjectionLocationDao().apply {
+            deleteTable()
+            for (i in 1 until resp.size) {
+                insert(PhysicalInjectionLocation(
+                        resp[i].get(0),
+                        resp[i].get(1),
+                        resp[i].get(2),
+                        resp[i].get(3),
+                        resp[i].get(4),
+                        Integer.parseInt(resp[i].get(5)),
+                        resp[i].get(6)))
+            }
+        }
     }
 
     private fun updatePartsOfVaxablePopulation(resp: List<CSVRecord>) {
-
+        db.getPartOfVaxablePopulationDao().apply {
+            deleteTable()
+            for (i in 1 until resp.size) {
+                insert(PartOfVaxablePopulation(
+                        resp[i].get(0),
+                        resp[i].get(1),
+                        resp[i].get(2),
+                        Integer.parseInt(resp[i].get(3))))
+            }
+        }
     }
 
     /**
@@ -222,63 +312,26 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
     private fun loadVaxDataFromLocalDb(vaxData: VaxData) {
         when (vaxData) {
             VaxData.PARTS_OF_VAXABLE_POPULATION ->
-                loadPartsOfVaxablePopulation()
+                partsOfVaxablePopulation.value =
+                        db.getPartOfVaxablePopulationDao().getPartsOfVaxablePopulation()
             VaxData.PHYSICAL_INJECTION_LOCATIONS ->
-                loadPhysicalInjectionLocations()
+                physicalInjectionLocations.value =
+                        db.getPhysicalInjectionLocationDao().getPhysicalInjectionLocations()
             VaxData.VAX_DELIVERIES ->
-                loadVaxDeliveries()
+                vaxDeliveries.value = db.getVaxDeliveryDao().getVaxDeliveries()
             VaxData.VAX_INJECTIONS ->
-                loadVaxInjections()
+                vaxInjections.value = db.getVaxInjectionDao().getVaxInjections()
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE ->
-                loadVaxInjectionSummariesByAgeRange()
+                vaxInjectionsSummariesByAgeRange.value =
+                        db.getVaxInjectionsSummaryByAgeRangeDao()
+                                .getVaxInjectionsSummariesByAgeRange()
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA ->
-                loadVaxInjectionSummariesByDayAndArea()
+                vaxInjectionsSummariesByDayAndArea.value =
+                        db.getVaxInjectionsSummaryByDayAndAreaDao()
+                                .getVaxInjectionsSummariesByDayAndArea()
             VaxData.VAX_STATS_SUMMARIES_BY_AREA ->
-                loadVaxStatsSummariesByArea()
+                vaxStatsSummariesByArea.value =
+                        db.getVaxStatsSummaryByAreaDao().getVaxStatsSummariesByArea()
         }
-    }
-
-    private fun loadVaxStatsSummariesByArea() {
-
-    }
-
-    private fun loadVaxInjectionSummariesByDayAndArea() {
-
-    }
-
-    private fun loadVaxInjectionSummariesByAgeRange() {
-
-    }
-
-    private fun loadVaxInjections() {
-
-    }
-
-    private fun loadVaxDeliveries() {
-
-    }
-
-    private fun loadPhysicalInjectionLocations() {
-
-    }
-
-    private fun loadPartsOfVaxablePopulation() {
-
-    }
-
-    /**
-     * util function
-     */
-    private fun isNetworkConnected(context: Context) : Boolean {
-        var result = false
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        cm.getNetworkCapabilities(cm.activeNetwork)?.run {
-            result = hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                    hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-        }
-
-        return result
     }
 }

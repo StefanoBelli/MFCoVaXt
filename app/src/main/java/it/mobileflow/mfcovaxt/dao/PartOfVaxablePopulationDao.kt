@@ -11,7 +11,7 @@ interface PartOfVaxablePopulationDao {
     fun insert(item: PartOfVaxablePopulation): Long
 
     @Query("SELECT * FROM PartOfVaxablePopulation")
-    fun getWholeVaxablePopulation(): Array<PartOfVaxablePopulation>
+    fun getPartsOfVaxablePopulation(): Array<PartOfVaxablePopulation>
 
     @Query("DELETE FROM PartOfVaxablePopulation")
     fun deleteTable(): Int

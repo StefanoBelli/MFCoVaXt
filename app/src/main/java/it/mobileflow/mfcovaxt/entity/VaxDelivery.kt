@@ -1,7 +1,6 @@
 package it.mobileflow.mfcovaxt.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import java.sql.Timestamp
 
 /**
@@ -10,7 +9,6 @@ import java.sql.Timestamp
  */
 @Entity
 data class VaxDelivery (
-    @PrimaryKey val index : Int,
     val area : String,
     val vaxName : String,
     val deliveryDate : Timestamp,
