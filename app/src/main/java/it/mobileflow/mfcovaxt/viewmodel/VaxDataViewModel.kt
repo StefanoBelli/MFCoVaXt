@@ -182,8 +182,9 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
                 updateVaxStatsSummariesByArea(resp)
         }
 
-        shouldReloadVaxData[vaxData] = true // unlocks call to populateVaxData
-
+        //will not load data if connection disappears,
+        // force-loading after update from external source
+        shouldReloadVaxData[vaxData] = false
         loadVaxDataFromLocalDb(vaxData)
     }
 
