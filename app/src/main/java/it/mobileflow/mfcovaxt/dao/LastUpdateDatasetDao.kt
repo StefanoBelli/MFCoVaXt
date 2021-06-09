@@ -12,8 +12,8 @@ interface LastUpdateDatasetDao {
     fun insert(item: LastUpdateDataset): Long
 
     @Update
-    fun update(item: LastUpdateDataset): Long
+    fun update(item: LastUpdateDataset): Int
 
-    @Query("SELECT lastUpdate FROM LastUpdateDataset LIMIT 1")
+    @Query("SELECT * FROM LastUpdateDataset LIMIT 1")
     fun getLastUpdateDataset(): Array<LastUpdateDataset>
 }

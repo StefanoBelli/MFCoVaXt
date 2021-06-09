@@ -2,7 +2,7 @@ package it.mobileflow.mfcovaxt.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.sql.Timestamp
+import java.util.*
 
 /**
  * Schema:
@@ -11,4 +11,5 @@ import java.sql.Timestamp
 @Entity
 data class LastUpdateDataset (
     @PrimaryKey val index : Int,
-    val lastUpdate : Timestamp)
+    val lastUpdate : Date
+)

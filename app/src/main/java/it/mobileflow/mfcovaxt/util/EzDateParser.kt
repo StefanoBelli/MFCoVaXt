@@ -19,17 +19,17 @@ class EzDateParser {
                     localDateTime.second).time
         }
 
-        fun parseDateOnlyGetTime(fmtDate: String, context: Context) : Long {
+        fun parseDateOnly(fmtDate: String, context: Context) : Date {
             val d : Date?
 
             try {
                 d = SimpleDateFormat("yyyy-MM-dd",
                         context.resources.configuration.locales[0]).parse(fmtDate)
             } catch(e: ParseException) {
-                return 0
+                return Date(0)
             }
 
-            return d!!.time
+            return d!!
         }
     }
 }

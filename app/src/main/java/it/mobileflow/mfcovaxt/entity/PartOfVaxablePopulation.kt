@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
  * Schema:
  * https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/platea.csv
  */
-@Entity
+@Entity(primaryKeys = ["area", "ageRange"])
 data class PartOfVaxablePopulation (
-    @PrimaryKey val area : String,
+    val area : String,
     val areaName : String,
-    @PrimaryKey val ageRange : String,
+    val ageRange : String,
     val totalPopulation : Int)

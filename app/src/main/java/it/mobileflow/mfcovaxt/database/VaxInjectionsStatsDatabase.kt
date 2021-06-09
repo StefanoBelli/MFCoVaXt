@@ -2,10 +2,11 @@ package it.mobileflow.mfcovaxt.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import it.mobileflow.mfcovaxt.dao.*
 import it.mobileflow.mfcovaxt.entity.*
 
-@Database(version = 1, entities = [
+@Database(exportSchema = false, version = 1, entities = [
     VaxInjection::class,
     VaxInjectionsSummaryByDayAndArea::class,
     VaxStatsSummaryByArea::class,
@@ -14,6 +15,7 @@ import it.mobileflow.mfcovaxt.entity.*
     LastUpdateDataset::class,
     PartOfVaxablePopulation::class,
     PhysicalInjectionLocation::class])
+@TypeConverters(Converters::class)
 abstract class VaxInjectionsStatsDatabase : RoomDatabase() {
     abstract fun getLastUpdateDatasetDao() : LastUpdateDatasetDao
     abstract fun getPartOfVaxablePopulationDao() : PartOfVaxablePopulationDao
