@@ -55,13 +55,13 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
     }
 
     private val shouldUpdateVaxData = mutableMapOf(
-            VaxData.PARTS_OF_VAXABLE_POPULATION to true,
-            VaxData.PHYSICAL_INJECTION_LOCATIONS to true,
-            VaxData.VAX_DELIVERIES to true,
-            VaxData.VAX_INJECTIONS to true,
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE to true,
-            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA to true,
-            VaxData.VAX_STATS_SUMMARIES_BY_AREA to true)
+            VaxData.PARTS_OF_VAXABLE_POPULATION to false,
+            VaxData.PHYSICAL_INJECTION_LOCATIONS to false,
+            VaxData.VAX_DELIVERIES to false,
+            VaxData.VAX_INJECTIONS to false,
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE to false,
+            VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA to false,
+            VaxData.VAX_STATS_SUMMARIES_BY_AREA to false)
 
     private val shouldReloadVaxData = mutableMapOf(
             VaxData.PARTS_OF_VAXABLE_POPULATION to true,
@@ -71,6 +71,8 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE to true,
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA to true,
             VaxData.VAX_STATS_SUMMARIES_BY_AREA to true)
+
+    private var isUpdatingLastUpdateDataset = false
 
     val partsOfVaxablePopulation = MutableLiveData<Array<PartOfVaxablePopulation>>()
     val physicalInjectionLocations = MutableLiveData<Array<PhysicalInjectionLocation>>()
@@ -82,25 +84,25 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
         MutableLiveData<Array<VaxInjectionsSummaryByDayAndArea>>()
     val vaxStatsSummariesByArea = MutableLiveData<Array<VaxStatsSummaryByArea>>()
 
-    private var isUpdatingLastUpdateDataset = false
-
-    /* public */
+    /**
+     * (assume) called *only* from main thread
+     */
     fun lastUpdateDataset(
             context: Context,
             doneListener: OnGenericListener<Boolean>,
             errorListener: OnGenericListener<VolleyError>) {
         if(!isUpdatingLastUpdateDataset) {
-            isUpdatingLastUpdateDataset = true
+            isUpdatingLastUpdateDataset = true // other call attempt are locked out [main thread]
             Http.getInstance(context).addToRequestQueue(
                     JsonObjectRequest(Request.Method.GET, LAST_UPDATE_DATASET_URL, null,
                             { response ->
                                 updateLastUpdateDataset(
                                         response.getString("ultimo_aggiornamento"))
-                                isUpdatingLastUpdateDataset = false
+                                isUpdatingLastUpdateDataset = false // unlocked from another thread
                                 doneListener.onEvent(true)
                             },
                             { error ->
-                                isUpdatingLastUpdateDataset = false
+                                isUpdatingLastUpdateDataset = false // unlocked from another thread
                                 errorListener.onEvent(error)
                             }))
         }
@@ -116,38 +118,45 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
             lastUpdateDatasetDao.insert(
                     LastUpdateDataset(0,
                             Timestamp(lastUpdate.time)))
-            for(key in shouldUpdateVaxData.keys) {
-                shouldUpdateVaxData[key] = true
-            }
+            shouldUpdateEveryVaxData()
         } else {
             val localLastUpdateDate = Date(lastUpdateDataset[0].lastUpdate.time)
             if (lastUpdate.after(localLastUpdateDate)) {
                 lastUpdateDatasetDao.update(
                         LastUpdateDataset(0,
                                 Timestamp(lastUpdate.time)))
-                for(key in shouldUpdateVaxData.keys) {
-                    shouldUpdateVaxData[key] = true
-                }
+                shouldUpdateEveryVaxData()
             }
         }
     }
 
-    /* public */
+    private fun shouldUpdateEveryVaxData() {
+        for(key in shouldUpdateVaxData.keys) {
+            shouldUpdateVaxData[key] = true // potentially unlock populateVaxData
+        }
+    }
+
+    /**
+     * (assume) called *only* from main thread
+     */
     fun populateVaxData(
             vaxData: VaxData,
             context: Context,
-            errorListener: OnGenericListener<VolleyError>) {
-        if(isNetworkConnected(context)) {
-            if (!isUpdatingLastUpdateDataset && shouldUpdateVaxData[vaxData]!!) {
-                Http.getInstance(context).addToRequestQueue(CsvRequest(urls[vaxData],
-                        { response -> updateVaxData(vaxData, response) },
-                        { error -> errorListener.onEvent(error) }))
-            }
-        } else {
-            if(shouldReloadVaxData[vaxData]!!) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    loadVaxDataFromLocalDb(vaxData)
-                }
+            errorListener: OnGenericListener<VolleyError>
+    ) {
+        if(isNetworkConnected(context) && !isUpdatingLastUpdateDataset &&
+                shouldUpdateVaxData[vaxData]!!) {
+            shouldUpdateVaxData[vaxData] = false // immediate locking from [main] thread
+            Http.getInstance(context).addToRequestQueue(CsvRequest(urls[vaxData],
+                    { response -> updateVaxData(vaxData, response) },
+                    { error ->
+                        errorListener.onEvent(error)
+                        shouldUpdateVaxData[vaxData] = true // unlocking from another thread
+                    }))
+        } else if(shouldReloadVaxData[vaxData]!!) {
+            shouldReloadVaxData[vaxData] = false // immediate locking from [main] thread
+            viewModelScope.launch(Dispatchers.IO) {
+                loadVaxDataFromLocalDb(vaxData)
             }
         }
     }
@@ -173,8 +182,7 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
                 updateVaxStatsSummariesByArea(resp)
         }
 
-        shouldUpdateVaxData[vaxData] = false
-        shouldReloadVaxData[vaxData] = true
+        shouldReloadVaxData[vaxData] = true // unlocks call to populateVaxData
 
         loadVaxDataFromLocalDb(vaxData)
     }
@@ -227,8 +235,6 @@ class VaxDataViewModel(private val db: VaxInjectionsStatsDatabase) : ViewModel()
             VaxData.VAX_STATS_SUMMARIES_BY_AREA ->
                 loadVaxStatsSummariesByArea()
         }
-
-        shouldReloadVaxData[vaxData] = false
     }
 
     private fun loadVaxStatsSummariesByArea() {

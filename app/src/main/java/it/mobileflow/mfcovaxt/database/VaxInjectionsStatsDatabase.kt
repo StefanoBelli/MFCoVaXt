@@ -11,12 +11,10 @@ import it.mobileflow.mfcovaxt.entity.*
     VaxStatsSummaryByArea::class,
     VaxInjectionsSummaryByAgeRange::class,
     VaxDelivery::class,
-    AppOwnLastUpdate::class,
     LastUpdateDataset::class,
     PartOfVaxablePopulation::class,
     PhysicalInjectionLocation::class])
 abstract class VaxInjectionsStatsDatabase : RoomDatabase() {
-    abstract fun getAppOwnLastUpdateDao() : AppOwnLastUpdateDao
     abstract fun getLastUpdateDatasetDao() : LastUpdateDatasetDao
     abstract fun getPartOfVaxablePopulationDao() : PartOfVaxablePopulationDao
     abstract fun getPhysicalInjectionLocationDao() : PhysicalInjectionLocationDao
