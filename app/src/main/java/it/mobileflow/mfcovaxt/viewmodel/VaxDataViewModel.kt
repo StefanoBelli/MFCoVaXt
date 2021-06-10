@@ -1,6 +1,7 @@
 package it.mobileflow.mfcovaxt.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -204,171 +205,186 @@ class VaxDataViewModel : ViewModel() {
     private suspend fun updateVaxStatsSummariesByArea(resp: List<CSVRecord>) {
         db.getVaxStatsSummaryByAreaDao().apply {
             withContext(Dispatchers.IO) {
-                deleteTable()
-            }
-            for(i in 1 until resp.size) {
-                withContext(Dispatchers.IO) {
-                    insert(
-                        VaxStatsSummaryByArea(
-                            resp[i].get(0),
-                            Integer.parseInt(resp[i].get(1)),
-                            Integer.parseInt(resp[i].get(2)),
-                            resp[i].get(3).toFloat(),
-                            resp[i].get(5),
-                            resp[i].get(6),
-                            Integer.parseInt(resp[i].get(7)),
-                            resp[i].get(8)
+                db.runInTransaction {
+                    deleteTable()
+                    for (i in 1 until resp.size) {
+                        insert(
+                                VaxStatsSummaryByArea(
+                                        resp[i].get(0),
+                                        Integer.parseInt(resp[i].get(1)),
+                                        Integer.parseInt(resp[i].get(2)),
+                                        resp[i].get(3).toFloat(),
+                                        resp[i].get(5),
+                                        resp[i].get(6),
+                                        Integer.parseInt(resp[i].get(7)),
+                                        resp[i].get(8)
+                                )
                         )
-                    )
+                    }
                 }
             }
         }
+
+        Log.d("MFCovAxTDownload", "Finished - updateVaxStatsSummariesByArea")
     }
 
     private suspend fun updateVaxInjectionSummariesByDayAndArea(resp: List<CSVRecord>, context: Context) {
         db.getVaxInjectionsSummaryByDayAndAreaDao().apply {
             withContext(Dispatchers.IO) {
-                deleteTable()
-            }
-            for(i in 1 until resp.size) {
-                withContext(Dispatchers.IO) {
-                    insert(
-                        VaxInjectionsSummaryByDayAndArea(
-                            resp[i].get(1),
-                            EzDateParser.parseDateOnly(resp[i].get(0), context),
-                            Integer.parseInt(resp[i].get(2)),
-                            Integer.parseInt(resp[i].get(3)),
-                            Integer.parseInt(resp[i].get(4)),
-                            Integer.parseInt(resp[i].get(5)),
-                            Integer.parseInt(resp[i].get(6)),
-                            resp[i].get(7),
-                            resp[i].get(8),
-                            Integer.parseInt(resp[i].get(9)),
-                            resp[i].get(10)
+                db.runInTransaction {
+                    deleteTable()
+                    for (i in 1 until resp.size) {
+                        insert(
+                                VaxInjectionsSummaryByDayAndArea(
+                                        resp[i].get(1),
+                                        EzDateParser.parseDateOnly(resp[i].get(0), context),
+                                        Integer.parseInt(resp[i].get(2)),
+                                        Integer.parseInt(resp[i].get(3)),
+                                        Integer.parseInt(resp[i].get(4)),
+                                        Integer.parseInt(resp[i].get(5)),
+                                        Integer.parseInt(resp[i].get(6)),
+                                        resp[i].get(7),
+                                        resp[i].get(8),
+                                        Integer.parseInt(resp[i].get(9)),
+                                        resp[i].get(10)
+                                )
                         )
-                    )
+                    }
                 }
             }
         }
+
+        Log.d("MFCovAxTDownload", "Finished - updateVaxInjectioSummariesByDayAndArea")
     }
 
     private suspend fun updateVaxInjectionSummariesByAgeRange(resp: List<CSVRecord>) {
         db.getVaxInjectionsSummaryByAgeRangeDao().apply {
             withContext(Dispatchers.IO) {
-                deleteTable()
-            }
-            for(i in 1 until resp.size) {
-                withContext(Dispatchers.IO) {
-                    insert(
-                        VaxInjectionsSummaryByAgeRange(
-                            resp[i].get(0),
-                            Integer.parseInt(resp[i].get(1)),
-                            Integer.parseInt(resp[i].get(2)),
-                            Integer.parseInt(resp[i].get(3)),
-                            Integer.parseInt(resp[i].get(4)),
-                            Integer.parseInt(resp[i].get(5))
+                db.runInTransaction {
+                    deleteTable()
+                    for (i in 1 until resp.size) {
+                        insert(
+                                VaxInjectionsSummaryByAgeRange(
+                                        resp[i].get(0),
+                                        Integer.parseInt(resp[i].get(1)),
+                                        Integer.parseInt(resp[i].get(2)),
+                                        Integer.parseInt(resp[i].get(3)),
+                                        Integer.parseInt(resp[i].get(4)),
+                                        Integer.parseInt(resp[i].get(5))
+                                )
                         )
-                    )
+                    }
                 }
             }
         }
+
+        Log.d("MFCovAxTDownload", "Finished - updateVaxInjectionSummariesByAgeRange")
     }
 
     private suspend fun updateVaxInjections(resp: List<CSVRecord>, context: Context) {
         db.getVaxInjectionDao().apply {
             withContext(Dispatchers.IO) {
-                deleteTable()
-            }
-            for(i in 1 until resp.size) {
-                withContext(Dispatchers.IO) {
-                    insert(
-                        VaxInjection(
-                            0,
-                            resp[i].get(2),
-                            resp[i].get(1),
-                            EzDateParser.parseDateOnly(resp[i].get(0), context),
-                            resp[i].get(3),
-                            Integer.parseInt(resp[i].get(4)),
-                            Integer.parseInt(resp[i].get(5)),
-                            Integer.parseInt(resp[i].get(6)),
-                            Integer.parseInt(resp[i].get(7)),
-                            resp[i].get(8),
-                            resp[i].get(9),
-                            Integer.parseInt(resp[i].get(10)),
-                            resp[i].get(11)
+                db.runInTransaction {
+                    deleteTable()
+                    for (i in 1 until resp.size) {
+                        insert(
+                                VaxInjection(
+                                        0,
+                                        resp[i].get(2),
+                                        resp[i].get(1),
+                                        EzDateParser.parseDateOnly(resp[i].get(0), context),
+                                        resp[i].get(3),
+                                        Integer.parseInt(resp[i].get(4)),
+                                        Integer.parseInt(resp[i].get(5)),
+                                        Integer.parseInt(resp[i].get(6)),
+                                        Integer.parseInt(resp[i].get(7)),
+                                        resp[i].get(8),
+                                        resp[i].get(9),
+                                        Integer.parseInt(resp[i].get(10)),
+                                        resp[i].get(11)
+                                )
                         )
-                    )
+                    }
                 }
             }
         }
+
+        Log.d("MFCovAxTDownload", "Finished - updateVaxInjections")
     }
+
 
     private suspend fun updateVaxDeliveries(resp: List<CSVRecord>, context: Context) {
         db.getVaxDeliveryDao().apply {
             withContext(Dispatchers.IO) {
-                deleteTable()
-            }
-            for (i in 1 until resp.size) {
-                withContext(Dispatchers.IO) {
-                    insert(
-                        VaxDelivery(
-                            0,
-                            resp[i].get(0),
-                            resp[i].get(1),
-                            EzDateParser.parseDateOnly(resp[i].get(3), context),
-                            Integer.parseInt(resp[i].get(2)),
-                            resp[i].get(4),
-                            resp[i].get(5),
-                            Integer.parseInt(resp[i].get(6)),
-                            resp[i].get(7)
+                db.runInTransaction {
+                    deleteTable()
+                    for (i in 1 until resp.size) {
+                        insert(
+                                VaxDelivery(
+                                        0,
+                                        resp[i].get(0),
+                                        resp[i].get(1),
+                                        EzDateParser.parseDateOnly(resp[i].get(3), context),
+                                        Integer.parseInt(resp[i].get(2)),
+                                        resp[i].get(4),
+                                        resp[i].get(5),
+                                        Integer.parseInt(resp[i].get(6)),
+                                        resp[i].get(7)
+                                )
                         )
-                    )
+                    }
                 }
             }
         }
+
+        Log.d("MFCovAxTDownload", "Finished - updateVaxDeliveries")
     }
 
     private suspend fun updatePhysicalInjectionLocations(resp: List<CSVRecord>) {
         db.getPhysicalInjectionLocationDao().apply {
             withContext(Dispatchers.IO) {
-                deleteTable()
-            }
-            for (i in 1 until resp.size) {
-                withContext(Dispatchers.IO) {
-                    insert(
-                        PhysicalInjectionLocation(0,
-                            resp[i].get(0),
-                            resp[i].get(1),
-                            resp[i].get(2),
-                            resp[i].get(3),
-                            resp[i].get(4),
-                            Integer.parseInt(resp[i].get(5)),
-                            resp[i].get(6)
+                db.runInTransaction {
+                    deleteTable()
+                    for (i in 1 until resp.size) {
+                        insert(
+                                PhysicalInjectionLocation(0,
+                                        resp[i].get(0),
+                                        resp[i].get(1),
+                                        resp[i].get(2),
+                                        resp[i].get(3),
+                                        resp[i].get(4),
+                                        Integer.parseInt(resp[i].get(5)),
+                                        resp[i].get(6)
+                                )
                         )
-                    )
+                    }
                 }
             }
         }
+
+        Log.d("MFCovAxTDownload", "Finished - updatePhysicalInjectionLocation")
     }
 
     private suspend fun updatePartsOfVaxablePopulation(resp: List<CSVRecord>) {
         db.getPartOfVaxablePopulationDao().apply {
             withContext(Dispatchers.IO) {
-                deleteTable()
-            }
-            for (i in 1 until resp.size) {
-                withContext(Dispatchers.IO) {
-                    insert(
-                        PartOfVaxablePopulation(
-                            resp[i].get(0),
-                            resp[i].get(1),
-                            resp[i].get(2),
-                            Integer.parseInt(resp[i].get(3))
+                db.runInTransaction {
+                    deleteTable()
+                    for (i in 1 until resp.size) {
+                        insert(
+                                PartOfVaxablePopulation(
+                                        resp[i].get(0),
+                                        resp[i].get(1),
+                                        resp[i].get(2),
+                                        Integer.parseInt(resp[i].get(3))
+                                )
                         )
-                    )
+                    }
                 }
             }
         }
+
+        Log.d("MFCovAxTDownload", "Finished - updatePartsOfVaxablePopulation")
     }
 
     /**
@@ -382,6 +398,7 @@ class VaxDataViewModel : ViewModel() {
                     withContext(Dispatchers.Main) {
                         partsOfVaxablePopulation.value = v
                     }
+                    Log.d("MFCovAxTDownload", "LoadingDone - updatePartsOfVaxablePopulation")
                 }
             VaxData.PHYSICAL_INJECTION_LOCATIONS ->
                 withContext(Dispatchers.IO) {
@@ -389,6 +406,7 @@ class VaxDataViewModel : ViewModel() {
                     withContext(Dispatchers.Main) {
                         physicalInjectionLocations.value = v
                     }
+                    Log.d("MFCovAxTDownload", "LoadingDone - updatePhysicalInjectionLocation")
                 }
             VaxData.VAX_DELIVERIES ->
                 withContext(Dispatchers.IO) {
@@ -396,6 +414,7 @@ class VaxDataViewModel : ViewModel() {
                     withContext(Dispatchers.Main) {
                         vaxDeliveries.value = v
                     }
+                    Log.d("MFCovAxTDownload", "LoadingDone - updateVaxDeliveries")
                 }
             VaxData.VAX_INJECTIONS ->
                 withContext(Dispatchers.IO) {
@@ -403,6 +422,8 @@ class VaxDataViewModel : ViewModel() {
                     withContext(Dispatchers.Main) {
                         vaxInjections.value = v
                     }
+
+                    Log.d("MFCovAxTDownload", "LoadingDone - updateVaxInjections")
                 }
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE ->
                 withContext(Dispatchers.IO) {
@@ -411,6 +432,8 @@ class VaxDataViewModel : ViewModel() {
                     withContext(Dispatchers.Main) {
                         vaxInjectionsSummariesByAgeRange.value = v
                     }
+
+                    Log.d("MFCovAxTDownload", "LoadingDone - updateVaxInjectionsSummariesByAgeRange")
                 }
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA ->
                 withContext(Dispatchers.IO) {
@@ -419,6 +442,8 @@ class VaxDataViewModel : ViewModel() {
                     withContext(Dispatchers.Main) {
                         vaxInjectionsSummariesByDayAndArea.value = v
                     }
+
+                    Log.d("MFCovAxTDownload", "LoadingDone - updateVaxInjectionsSummariesByDayAndArea")
                 }
             VaxData.VAX_STATS_SUMMARIES_BY_AREA ->
                 withContext(Dispatchers.IO) {
@@ -426,7 +451,9 @@ class VaxDataViewModel : ViewModel() {
                     withContext(Dispatchers.Main) {
                         vaxStatsSummariesByArea.value = v
                     }
+
+                    Log.d("MFCovAxTDownload", "LoadingDone - updateVaxStatsSummariesByArea")
                 }
+            }
         }
     }
-}
