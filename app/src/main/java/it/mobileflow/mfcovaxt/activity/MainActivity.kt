@@ -2,6 +2,7 @@ package it.mobileflow.mfcovaxt.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.room.Room
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         var shouldRun = false
         vaxDataViewModel.db = db
-        vaxDataViewModel.lastUpdateDataset(this, object : OnGenericListener<Boolean> {
+        val err = vaxDataViewModel.lastUpdateDataset(this, object : OnGenericListener<Boolean> {
             override fun onEvent(arg: Boolean) {
                 Toast.makeText(baseContext, "llalalalalla", Toast.LENGTH_SHORT).show()
             }
@@ -41,8 +42,19 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        val msg : String
+        if(err == VaxDataViewModel.LudError.NO_CONNECTIVITY)
+            msg = "no connectivity"
+        else if(err == VaxDataViewModel.LudError.UPDATE_IN_PROGRESS)
+            msg = "update in progress"
+        else
+            msg = "ok"
+
+        Log.e("luderror", msg)
+
         binding.button.setOnClickListener {
             Toast.makeText(baseContext, "clicked", Toast.LENGTH_SHORT).show()
+
             vaxDataViewModel.populateVaxData(
                 VaxDataViewModel.VaxData.VAX_DELIVERIES,
                 this,
@@ -51,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
                 })
-
+/*
             vaxDataViewModel.populateVaxData(
                 VaxDataViewModel.VaxData.VAX_INJECTIONS,
                 this,
@@ -60,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
                 })
-
+*/
             vaxDataViewModel.populateVaxData(
                     VaxDataViewModel.VaxData.PARTS_OF_VAXABLE_POPULATION,
                     this,

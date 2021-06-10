@@ -32,6 +32,12 @@ class VaxDataViewModel : ViewModel() {
         VAX_STATS_SUMMARIES_BY_AREA
     }
 
+    enum class LudError {
+        OK,
+        UPDATE_IN_PROGRESS,
+        NO_CONNECTIVITY
+    }
+
     lateinit var db : VaxInjectionsStatsDatabase
 
     companion object {
@@ -91,7 +97,7 @@ class VaxDataViewModel : ViewModel() {
     fun lastUpdateDataset(
             appContext: Context,
             doneListener: OnGenericListener<Boolean>,
-            errorListener: OnGenericListener<VolleyError>) {
+            errorListener: OnGenericListener<VolleyError>) : LudError {
         if(!isUpdatingLastUpdateDataset && EzNetwork.connected(appContext)) {
             isUpdatingLastUpdateDataset = true // other call attempt are locked out [main thread]
             Http.getInstance(appContext).addToRequestQueue(
@@ -107,7 +113,14 @@ class VaxDataViewModel : ViewModel() {
                                 isUpdatingLastUpdateDataset = false // unlocked from another thread
                                 errorListener.onEvent(error)
                             }))
+
+            return LudError.OK
         }
+
+        return if(isUpdatingLastUpdateDataset)
+            LudError.UPDATE_IN_PROGRESS
+        else
+            LudError.NO_CONNECTIVITY
     }
 
     private suspend fun updateLastUpdateDataset(
@@ -285,6 +298,7 @@ class VaxDataViewModel : ViewModel() {
         db.getVaxInjectionDao().apply {
             withContext(Dispatchers.IO) {
                 db.runInTransaction {
+                    Log.d("MFCovAxTDownload", "internet")
                     deleteTable()
                     for (i in 1 until resp.size) {
                         insert(
