@@ -10,6 +10,7 @@ import com.android.volley.VolleyError
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
 import it.mobileflow.mfcovaxt.listener.OnGenericListener
+import it.mobileflow.mfcovaxt.util.EzAppDataUpdateTracker
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
                 })
-/*
+
             vaxDataViewModel.populateVaxData(
                 VaxDataViewModel.VaxData.VAX_INJECTIONS,
                 this,
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
                 })
-*/
+
             vaxDataViewModel.populateVaxData(
                     VaxDataViewModel.VaxData.PARTS_OF_VAXABLE_POPULATION,
                     this,

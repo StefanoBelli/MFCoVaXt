@@ -13,6 +13,7 @@ import it.mobileflow.mfcovaxt.entity.*
 import it.mobileflow.mfcovaxt.http.CsvRequest
 import it.mobileflow.mfcovaxt.http.Http
 import it.mobileflow.mfcovaxt.listener.OnGenericListener
+import it.mobileflow.mfcovaxt.util.EzAppDataUpdateTracker
 import it.mobileflow.mfcovaxt.util.EzDateParser
 import it.mobileflow.mfcovaxt.util.EzNetwork
 import kotlinx.coroutines.Dispatchers
@@ -106,7 +107,7 @@ class VaxDataViewModel : ViewModel() {
                                 viewModelScope.launch(Dispatchers.Default) {
                                     updateLastUpdateDataset(
                                         response.getString("ultimo_aggiornamento"),
-                                        doneListener)
+                                        doneListener, appContext)
                                 }
                             },
                             { error ->
@@ -125,9 +126,11 @@ class VaxDataViewModel : ViewModel() {
 
     private suspend fun updateLastUpdateDataset(
         lastUpdateIso8601: String,
-        doneListener: OnGenericListener<Boolean>
+        doneListener: OnGenericListener<Boolean>,
+        appContext: Context
     ) {
-        val lastUpdate = EzDateParser.parse(lastUpdateIso8601)
+        val lastUpdate = EzDateParser.parseIso8601TzUTC(lastUpdateIso8601, appContext)
+        Log.e("lastUpdateTime", lastUpdate.toString());
 
         val lastUpdateDatasetDao = db.getLastUpdateDatasetDao()
         var lastUpdateDataset : Array<LastUpdateDataset>
@@ -144,6 +147,13 @@ class VaxDataViewModel : ViewModel() {
             if (lastUpdate.after(localLastUpdateDate)) {
                 lastUpdateDatasetDao.update(LastUpdateDataset(0, lastUpdate))
                 shouldUpdateEveryVaxData()
+            } else {
+                for(key in shouldUpdateVaxData.keys) {
+                    Log.e("getlastupdate", EzAppDataUpdateTracker.getLastUpdate(key, appContext).toString())
+                    if(EzAppDataUpdateTracker.getLastUpdate(key, appContext).before(localLastUpdateDate)) {
+                        shouldUpdateVaxData[key] = true // potentially unlock populateVaxData
+                    }
+                }
             }
         }
 
@@ -194,19 +204,19 @@ class VaxDataViewModel : ViewModel() {
     private suspend fun updateVaxData(vaxData: VaxData, resp: List<CSVRecord>, context: Context) {
         when (vaxData) {
             VaxData.PARTS_OF_VAXABLE_POPULATION ->
-                updatePartsOfVaxablePopulation(resp)
+                updatePartsOfVaxablePopulation(resp, context)
             VaxData.PHYSICAL_INJECTION_LOCATIONS ->
-                updatePhysicalInjectionLocations(resp)
+                updatePhysicalInjectionLocations(resp, context)
             VaxData.VAX_DELIVERIES ->
                 updateVaxDeliveries(resp, context)
             VaxData.VAX_INJECTIONS ->
                 updateVaxInjections(resp, context)
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE ->
-                updateVaxInjectionSummariesByAgeRange(resp)
+                updateVaxInjectionSummariesByAgeRange(resp, context)
             VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA ->
                 updateVaxInjectionSummariesByDayAndArea(resp, context)
             VaxData.VAX_STATS_SUMMARIES_BY_AREA ->
-                updateVaxStatsSummariesByArea(resp)
+                updateVaxStatsSummariesByArea(resp, context)
         }
 
         //will not load data if connection disappears,
@@ -215,7 +225,7 @@ class VaxDataViewModel : ViewModel() {
         loadVaxDataFromLocalDb(vaxData)
     }
 
-    private suspend fun updateVaxStatsSummariesByArea(resp: List<CSVRecord>) {
+    private suspend fun updateVaxStatsSummariesByArea(resp: List<CSVRecord>, context: Context) {
         db.getVaxStatsSummaryByAreaDao().apply {
             withContext(Dispatchers.IO) {
                 db.runInTransaction {
@@ -238,6 +248,7 @@ class VaxDataViewModel : ViewModel() {
             }
         }
 
+        EzAppDataUpdateTracker.putLastUpdate(VaxData.VAX_STATS_SUMMARIES_BY_AREA, context)
         Log.d("MFCovAxTDownload", "Finished - updateVaxStatsSummariesByArea")
     }
 
@@ -267,10 +278,11 @@ class VaxDataViewModel : ViewModel() {
             }
         }
 
+        EzAppDataUpdateTracker.putLastUpdate(VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA, context)
         Log.d("MFCovAxTDownload", "Finished - updateVaxInjectioSummariesByDayAndArea")
     }
 
-    private suspend fun updateVaxInjectionSummariesByAgeRange(resp: List<CSVRecord>) {
+    private suspend fun updateVaxInjectionSummariesByAgeRange(resp: List<CSVRecord>, context: Context) {
         db.getVaxInjectionsSummaryByAgeRangeDao().apply {
             withContext(Dispatchers.IO) {
                 db.runInTransaction {
@@ -291,6 +303,7 @@ class VaxDataViewModel : ViewModel() {
             }
         }
 
+        EzAppDataUpdateTracker.putLastUpdate(VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE, context)
         Log.d("MFCovAxTDownload", "Finished - updateVaxInjectionSummariesByAgeRange")
     }
 
@@ -323,6 +336,7 @@ class VaxDataViewModel : ViewModel() {
             }
         }
 
+        EzAppDataUpdateTracker.putLastUpdate(VaxData.VAX_INJECTIONS, context)
         Log.d("MFCovAxTDownload", "Finished - updateVaxInjections")
     }
 
@@ -351,10 +365,11 @@ class VaxDataViewModel : ViewModel() {
             }
         }
 
+        EzAppDataUpdateTracker.putLastUpdate(VaxData.VAX_DELIVERIES, context)
         Log.d("MFCovAxTDownload", "Finished - updateVaxDeliveries")
     }
 
-    private suspend fun updatePhysicalInjectionLocations(resp: List<CSVRecord>) {
+    private suspend fun updatePhysicalInjectionLocations(resp: List<CSVRecord>, context: Context) {
         db.getPhysicalInjectionLocationDao().apply {
             withContext(Dispatchers.IO) {
                 db.runInTransaction {
@@ -376,10 +391,11 @@ class VaxDataViewModel : ViewModel() {
             }
         }
 
+        EzAppDataUpdateTracker.putLastUpdate(VaxData.PHYSICAL_INJECTION_LOCATIONS, context)
         Log.d("MFCovAxTDownload", "Finished - updatePhysicalInjectionLocation")
     }
 
-    private suspend fun updatePartsOfVaxablePopulation(resp: List<CSVRecord>) {
+    private suspend fun updatePartsOfVaxablePopulation(resp: List<CSVRecord>, context: Context) {
         db.getPartOfVaxablePopulationDao().apply {
             withContext(Dispatchers.IO) {
                 db.runInTransaction {
@@ -398,6 +414,7 @@ class VaxDataViewModel : ViewModel() {
             }
         }
 
+        EzAppDataUpdateTracker.putLastUpdate(VaxData.PARTS_OF_VAXABLE_POPULATION, context)
         Log.d("MFCovAxTDownload", "Finished - updatePartsOfVaxablePopulation")
     }
 

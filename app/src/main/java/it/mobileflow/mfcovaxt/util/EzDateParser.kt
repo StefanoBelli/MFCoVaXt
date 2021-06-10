@@ -1,22 +1,20 @@
 package it.mobileflow.mfcovaxt.util
 
 import android.content.Context
+import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
 
 class EzDateParser {
     companion object {
-        fun parse(dateIso8601: String) : Date {
-            val localDateTime = LocalDateTime.parse(dateIso8601.substring(0, 19))
-            return GregorianCalendar(
-                    localDateTime.year,
-                    localDateTime.monthValue,
-                    localDateTime.dayOfMonth,
-                    localDateTime.hour,
-                    localDateTime.minute,
-                    localDateTime.second).time
+        fun parseIso8601TzUTC(dateIso8601: String, context: Context) : Date {
+            val orig = dateIso8601.substring(0, 19)
+            val target = orig.replace("T", " ")
+            val fmt: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                    context.resources.configuration.locales[0])
+            fmt.timeZone = TimeZone.getTimeZone("UTC")
+            return fmt.parse(target)!!
         }
 
         fun parseDateOnly(fmtDate: String, context: Context) : Date {
@@ -25,7 +23,7 @@ class EzDateParser {
             try {
                 d = SimpleDateFormat("yyyy-MM-dd",
                         context.resources.configuration.locales[0]).parse(fmtDate)
-            } catch(e: ParseException) {
+            } catch (e: ParseException) {
                 return Date(0)
             }
 
