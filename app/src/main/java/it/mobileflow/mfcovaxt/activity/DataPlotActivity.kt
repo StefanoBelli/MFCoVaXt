@@ -10,7 +10,7 @@ import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 class DataPlotActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDataPlotBinding
     private lateinit var vaxDataViewModel: VaxDataViewModel
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDataPlotBinding.inflate(layoutInflater)

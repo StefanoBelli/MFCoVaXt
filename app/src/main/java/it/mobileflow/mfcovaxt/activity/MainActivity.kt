@@ -31,38 +31,5 @@ class MainActivity : AppCompatActivity() {
         ).build()
 
         vaxDataViewModel.db = db
-
-        /*
-        val err = vaxDataViewModel.lastUpdateDataset(this, {}, {})
-
-        binding.button.setOnClickListener {
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_DELIVERIES,
-                    this, {})
-
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_INJECTIONS,
-                    this, {})
-
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.PARTS_OF_VAXABLE_POPULATION,
-                    this, {})
-
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.PHYSICAL_INJECTION_LOCATIONS,
-                    this, {})
-
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE,
-                    this, {})
-
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA,
-                    this, {})
-
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA,
-                    this, {})
-        }*/
     }
 }
