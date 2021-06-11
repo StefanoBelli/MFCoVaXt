@@ -2,7 +2,6 @@ package it.mobileflow.mfcovaxt.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.sql.Timestamp
 import java.util.*
 
 /**

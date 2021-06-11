@@ -1,7 +1,6 @@
 package it.mobileflow.mfcovaxt.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 /**
  * Schema:

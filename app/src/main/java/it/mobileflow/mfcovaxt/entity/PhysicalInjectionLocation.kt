@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
  * Schema
  * https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/punti-somministrazione-tipologia.csv
  */
-@Entity/*(primaryKeys = ["area", "locationName"])*/
+@Entity
 data class PhysicalInjectionLocation (
         @PrimaryKey(autoGenerate = true) val index: Int = 0,
         val area : String,
