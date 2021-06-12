@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.commons.csv.CSVRecord
+import java.util.*
 
 
 class VaxDataViewModel : ViewModel() {
@@ -80,6 +81,7 @@ class VaxDataViewModel : ViewModel() {
 
     private var isUpdatingLastUpdateDataset = false
 
+    val lastUpdateDatasetDate = MutableLiveData<Date>()
     val partsOfVaxablePopulation = MutableLiveData<Array<PartOfVaxablePopulation>>()
     val physicalInjectionLocations = MutableLiveData<Array<PhysicalInjectionLocation>>()
     val vaxDeliveries = MutableLiveData<Array<VaxDelivery>>()
@@ -157,6 +159,10 @@ class VaxDataViewModel : ViewModel() {
                     }
                 }
             }
+        }
+
+        withContext(Dispatchers.Main) {
+            lastUpdateDatasetDate.value = lastUpdate
         }
 
         isUpdatingLastUpdateDataset = false // unlocked from another thread
@@ -476,6 +482,6 @@ class VaxDataViewModel : ViewModel() {
                         vaxStatsSummariesByArea.value = v
                     }
                 }
-            }
         }
     }
+}

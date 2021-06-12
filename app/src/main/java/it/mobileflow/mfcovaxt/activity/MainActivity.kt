@@ -2,6 +2,7 @@ package it.mobileflow.mfcovaxt.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
@@ -31,5 +32,6 @@ class MainActivity : AppCompatActivity() {
         ).build()
 
         vaxDataViewModel.db = db
+        vaxDataViewModel.lastUpdateDataset(this, { Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()}, {})
     }
 }
