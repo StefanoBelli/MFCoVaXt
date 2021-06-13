@@ -484,11 +484,11 @@
                     </TableRow>
 
                     <TableRow
+                        tools:ignore="TooManyViews"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
                         <TextView
-                            tools:ignore="TooManyViews"
                             android:padding="@dimen/mid_table_data_pad"
                             android:text="@string/pab" />
 
