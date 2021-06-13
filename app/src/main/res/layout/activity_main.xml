@@ -13,21 +13,22 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/reportVaxTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
-            android:text="TextView"
+            android:text="@string/report_vax"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.458"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toEndOf="@+id/coccardaIv"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/coccardaIv"
             android:layout_width="112dp"
             android:layout_height="111dp"
             android:layout_marginTop="16dp"
+            android:contentDescription="@string/coccarda"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.053"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,35 +36,36 @@
             app:srcCompat="@drawable/coccarda" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/lastUpdatedOnTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="144dp"
-            android:text="TextViewBottom"
+            android:text="@string/last_updated_on"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/medsIv"
             android:layout_width="79dp"
             android:layout_height="90dp"
             android:layout_marginStart="92dp"
             android:layout_marginTop="52dp"
+            android:contentDescription="@string/meds"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/coccardaIv"
             app:srcCompat="@drawable/meds" />
 
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/totalInjNumTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="248dp"
-            android:text="TextView"
+            android:text="@string/waiting_for_data"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.591"
+            app:layout_constraintHorizontal_bias="0.743"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -76,119 +78,126 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+            app:layout_constraintTop_toBottomOf="@+id/medsIv" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/totSommAdvTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:text="TextView"
+            android:text="@string/tot_inj"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintTop_toBottomOf="@+id/totalInjNumTv" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/peopleIv"
             android:layout_width="144dp"
             android:layout_height="91dp"
             android:layout_marginBottom="76dp"
-            app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+            android:contentDescription="@string/people"
+            app:layout_constraintBottom_toTopOf="@+id/sommByAreaTlSv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.755"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/group_person" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/fullyVaxedAdvTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="76dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toStartOf="@+id/imageView3"
+            android:text="@string/tot_vaxed"
+            app:layout_constraintEnd_toStartOf="@+id/peopleIv"
             app:layout_constraintHorizontal_bias="0.471"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+            app:layout_constraintTop_toBottomOf="@+id/medsIv" />
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/fullyVaxedNumTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toStartOf="@+id/imageView3"
+            android:text="@string/waiting_for_data"
+            app:layout_constraintEnd_toStartOf="@+id/peopleIv"
             app:layout_constraintHorizontal_bias="0.471"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+            app:layout_constraintTop_toBottomOf="@+id/fullyVaxedAdvTv" />
 
         <TextView
-            android:id="@+id/textView7"
+            android:id="@+id/fullyVaxedPercFrom12Age"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="TextView"
-            app:layout_constraintEnd_toStartOf="@+id/imageView3"
+            android:text="@string/waiting_for_data"
+            app:layout_constraintEnd_toStartOf="@+id/peopleIv"
             app:layout_constraintHorizontal_bias="0.471"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+            app:layout_constraintTop_toBottomOf="@+id/fullyVaxedNumTv" />
 
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/sommByAreaAdvTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:text="TextView"
-            app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+            android:text="@string/tot_somm_by_area"
+            app:layout_constraintBottom_toTopOf="@+id/sommByAreaTlSv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/textView10"
+            android:id="@+id/injLocationsNumAdvTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="744dp"
-            android:text="TextView"
+            android:text="@string/inj_locations"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView12"
+            android:id="@+id/injLocationsNumTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="TextView"
+            android:text="@string/waiting_for_data"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView10" />
+            app:layout_constraintTop_toBottomOf="@+id/injLocationsNumAdvTv" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/plotBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="12dp"
-            android:text="Button"
-            app:layout_constraintEnd_toStartOf="@+id/button2"
-            app:layout_constraintTop_toBottomOf="@+id/textView12" />
+            android:text="@string/view_plots"
+            app:layout_constraintEnd_toStartOf="@+id/injLocationsBtn"
+            app:layout_constraintTop_toBottomOf="@+id/injLocationsNumTv"
+            android:background="@android:color/transparent"
+            android:textColor="@color/blue"
+            android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"/>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/injLocationsBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
-            android:text="Button"
+            android:text="@string/more_on_inj_locations"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView12" />
+            app:layout_constraintTop_toBottomOf="@+id/injLocationsNumTv"
+            android:background="@android:color/transparent"
+            android:textColor="@color/blue"
+            android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"/>
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/scrollView2"
+            android:id="@+id/sommByAreaTlSv"
             android:layout_width="349dp"
             android:layout_height="216dp"
             android:layout_marginTop="512dp"
@@ -203,139 +212,363 @@
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+
+                    <TextView android:text="@string/area"/>
+                    <TextView android:text="@string/injected"/>
+                    <TextView android:text="@string/delivered"/>
+                    <TextView android:text="@string/percentage"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+
+                    <TextView
+                        android:text="@string/abr"/>
+                    <TextView
+                        android:id="@+id/abrInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/abrDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/abrPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+
+                    <TextView
+                        android:text="@string/bas"/>
+                    <TextView
+                        android:id="@+id/basInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/basDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/basPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+
+                    <TextView
+                        android:text="@string/cal"/>
+                    <TextView
+                        android:id="@+id/calInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/calDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/calPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+
+                    <TextView
+                        android:text="@string/cam"/>
+                    <TextView
+                        android:id="@+id/camInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/camDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/camPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+
+                    <TextView
+                        android:text="@string/emr"/>
+                    <TextView
+                        android:id="@+id/emrInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/emrDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/emrPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+
+                    <TextView
+                        android:text="@string/fvg"/>
+                    <TextView
+                        android:id="@+id/fvgInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/fvgDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/fvgPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/laz"/>
+                    <TextView
+                        android:id="@+id/lazInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/lazDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/lazPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/lig"/>
+                    <TextView
+                        android:id="@+id/ligInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/ligDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/ligPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/lom"/>
+                    <TextView
+                        android:id="@+id/lomInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/lomDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/lomPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/mar"/>
+                    <TextView
+                        android:id="@+id/marInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/marDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/marPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/mol"/>
+                    <TextView
+                        android:id="@+id/molInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/molDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/molPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/pie"/>
+                    <TextView
+                        android:id="@+id/pieInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/pieDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/piePercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/pug"/>
+                    <TextView
+                        android:id="@+id/pugInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/pugDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/pugPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/sar"/>
+                    <TextView
+                        android:id="@+id/sarInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/sarDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/sarPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/sic"/>
+                    <TextView
+                        android:id="@+id/sicInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/sicDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/sicPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/taa"/>
+                    <TextView
+                        android:id="@+id/taaInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/taaDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/taaPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/tos"/>
+                    <TextView
+                        android:id="@+id/tosInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/tosDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/tosPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/umb"/>
+                    <TextView
+                        android:id="@+id/umbInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/umbDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/umbPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/abr"/>
+                    <TextView
+                        android:id="@+id/abrInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/abrDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/abrPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/vda"/>
+                    <TextView
+                        android:id="@+id/vdaInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/vdaDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/vdaPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+                    <TextView
+                        android:text="@string/ven"/>
+                    <TextView
+                        android:id="@+id/venInjTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/venDelivTv"
+                        android:text="@string/waiting_for_data"/>
+                    <TextView
+                        android:id="@+id/venPercTv"
+                        android:text="@string/waiting_for_data"/>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView android:text="ciao"></TextView>
+
+                    <TextView android:text="@string/total"/>
+                    <TextView android:text="@string/waiting_for_data"/>
+                    <TextView android:text="@string/waiting_for_data"/>
+                    <TextView android:text="@string/waiting_for_data"/>
                 </TableRow>
 
             </TableLayout>
