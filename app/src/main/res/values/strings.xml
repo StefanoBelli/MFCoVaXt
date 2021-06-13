@@ -2,7 +2,7 @@
     <string name="app_name">MFCoVaXt</string>
     <string name="coccarda">Coccarda</string>
     <string name="report_vax">Anti COVID-19 Vax\nInjections Report</string>
-    <string name="last_updated_on_waiting_data">Last updated on: waiting data…</string>
+    <string name="last_updated_on_waiting_data">Last updated on: waiting for data…</string>
     <string name="last_updated_on_fmt">Last updated on: %s</string>
     <string name="meds">Meds</string>
     <string name="waiting_for_data">Waiting for data…</string>
