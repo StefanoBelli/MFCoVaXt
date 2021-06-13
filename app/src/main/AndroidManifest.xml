@@ -12,7 +12,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.MFCoVaXt">
-        <activity android:name=".activity.DataPlotActivity"></activity>
+        <activity
+            android:name=".activity.DataPlotActivity"
+            android:screenOrientation="landscape" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

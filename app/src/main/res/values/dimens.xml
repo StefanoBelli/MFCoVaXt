@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="title_text_size">25sp</dimen>
+    <dimen name="title_text_size">31sp</dimen>
     <dimen name="med_text_size">25sp</dimen>
     <dimen name="small_text_size">20sp</dimen>
     <dimen name="smaller_text_size">17sp</dimen>
-
 </resources>
