@@ -40,4 +40,6 @@
     <string name="total">Total</string>
     <string name="pab">P.A. Bolzano</string>
     <string name="pat">P.A. Trento</string>
+    <string name="loading_data">Loading data</string>
+    <string name="please_wait">Please wait while we are loading data…</string>
 </resources>

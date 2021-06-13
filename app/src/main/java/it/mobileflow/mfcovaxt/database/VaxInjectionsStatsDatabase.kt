@@ -1,6 +1,8 @@
 package it.mobileflow.mfcovaxt.database
 
+import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import it.mobileflow.mfcovaxt.dao.*
@@ -17,6 +19,24 @@ import it.mobileflow.mfcovaxt.entity.*
     PhysicalInjectionLocation::class])
 @TypeConverters(Converters::class)
 abstract class VaxInjectionsStatsDatabase : RoomDatabase() {
+    companion object {
+        private const val DB_NAME = "mfcovaxtdb"
+        @Volatile
+        private var INSTANCE: VaxInjectionsStatsDatabase? = null
+
+        fun getInstance(context: Context): VaxInjectionsStatsDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        VaxInjectionsStatsDatabase::class.java,
+                        DB_NAME
+                ).build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
+
     abstract fun getLastUpdateDatasetDao() : LastUpdateDatasetDao
     abstract fun getPartOfVaxablePopulationDao() : PartOfVaxablePopulationDao
     abstract fun getPhysicalInjectionLocationDao() : PhysicalInjectionLocationDao
