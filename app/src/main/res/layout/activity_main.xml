@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -201,418 +200,517 @@
                 android:layout_height="match_parent">
 
                 <TableLayout
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/area" />
+                        <TextView
+                            android:text="@string/area"
+                            android:textStyle="bold"
+                            android:padding="@dimen/header_and_trailer_pad"
+                            android:background="@color/gray"/>
 
-                        <TextView android:text="@string/injected" />
+                        <TextView
+                            android:text="@string/injected"
+                            android:textStyle="bold"
+                            android:padding="@dimen/header_and_trailer_pad"
+                            android:background="@color/gray"/>
 
-                        <TextView android:text="@string/delivered" />
+                        <TextView android:text="@string/delivered"
+                            android:textStyle="bold"
+                            android:padding="@dimen/header_and_trailer_pad"
+                            android:background="@color/gray"/>
 
-                        <TextView android:text="@string/percentage" />
+                        <TextView android:text="@string/percentage"
+                            android:textStyle="bold"
+                            android:padding="@dimen/header_and_trailer_pad"
+                            android:background="@color/gray" />
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/abr" />
+                        <TextView android:text="@string/abr"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/abrInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/abrDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/abrPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/bas" />
+                        <TextView android:text="@string/bas"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/basInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/basDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/basPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/cal" />
+                        <TextView android:text="@string/cal"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/calInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/calDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/calPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/cam" />
+                        <TextView android:text="@string/cam"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/camInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/camDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/camPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/emr" />
+                        <TextView android:text="@string/emr"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/emrInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/emrDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/emrPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/fvg" />
+                        <TextView android:text="@string/fvg"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/fvgInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/fvgDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/fvgPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/laz" />
+                        <TextView android:text="@string/laz"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/lazInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/lazDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/lazPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/lig" />
+                        <TextView android:text="@string/lig"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/ligInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/ligDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/ligPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/lom" />
+                        <TextView android:text="@string/lom"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/lomInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/lomDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/lomPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/mar" />
+                        <TextView android:text="@string/mar"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/marInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/marDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/marPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad" />
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/mol" />
+                        <TextView android:text="@string/mol"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/molInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/molDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/molPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
+                        tools:ignore="TooManyViews"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/pie" />
+                        <TextView android:text="@string/pie"
+                            android:padding="@dimen/mid_table_data_pad" />
 
                         <TextView
                             android:id="@+id/pieInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/pieDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/piePercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/pug" />
+                        <TextView android:text="@string/pug"
+                            android:padding="@dimen/mid_table_data_pad" />
 
                         <TextView
                             android:id="@+id/pugInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/pugDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/pugPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/sar" />
+                        <TextView android:text="@string/sar"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/sarInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/sarDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/sarPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/sic" />
+                        <TextView android:text="@string/sic"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/sicInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/sicDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/sicPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/pab" />
+                        <TextView android:text="@string/pab"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/pabInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/pabDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/pabPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/pat" />
+                        <TextView android:text="@string/pat"
+                            android:padding="@dimen/mid_table_data_pad" />
 
                         <TextView
                             android:id="@+id/patInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/patDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad" />
 
                         <TextView
                             android:id="@+id/patPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/tos" />
+                        <TextView android:text="@string/tos"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/tosInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad" />
 
                         <TextView
                             android:id="@+id/tosDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/tosPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/umb" />
+                        <TextView android:text="@string/umb"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/umbInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/umbDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/umbPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/vda" />
+                        <TextView android:text="@string/vda"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/vdaInjTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/vdaDelivTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/vdaPercTv"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/ven" />
+                        <TextView android:text="@string/ven"
+                            android:padding="@dimen/mid_table_data_pad"/>
 
                         <TextView
                             android:id="@+id/venInjTv"
+                            android:padding="@dimen/mid_table_data_pad"
                             android:text="@string/waiting_for_data" />
 
                         <TextView
                             android:id="@+id/venDelivTv"
+                            android:padding="@dimen/mid_table_data_pad"
                             android:text="@string/waiting_for_data" />
 
                         <TextView
                             android:id="@+id/venPercTv"
+                            android:padding="@dimen/mid_table_data_pad"
                             android:text="@string/waiting_for_data" />
                     </TableRow>
 
@@ -620,13 +718,25 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView android:text="@string/total" />
+                        <TextView android:text="@string/total"
+                            android:textStyle="bold|italic"
+                            android:padding="@dimen/header_and_trailer_pad"
+                            android:background="@color/gray"/>
 
-                        <TextView android:text="@string/waiting_for_data" />
+                        <TextView android:text="@string/waiting_for_data"
+                            android:textStyle="bold"
+                            android:padding="@dimen/header_and_trailer_pad"
+                            android:background="@color/gray"/>
 
-                        <TextView android:text="@string/waiting_for_data" />
+                        <TextView android:text="@string/waiting_for_data"
+                            android:textStyle="bold"
+                            android:padding="@dimen/header_and_trailer_pad"
+                            android:background="@color/gray"/>
 
-                        <TextView android:text="@string/waiting_for_data" />
+                        <TextView android:text="@string/waiting_for_data"
+                            android:textStyle="bold"
+                            android:padding="@dimen/header_and_trailer_pad"
+                            android:background="@color/gray"/>
                     </TableRow>
                 </TableLayout>
             </HorizontalScrollView>

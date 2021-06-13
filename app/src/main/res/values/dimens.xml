@@ -4,4 +4,6 @@
     <dimen name="med_text_size">25sp</dimen>
     <dimen name="small_text_size">20sp</dimen>
     <dimen name="smaller_text_size">17sp</dimen>
+    <dimen name="header_and_trailer_pad">5dp</dimen>
+    <dimen name="mid_table_data_pad">3dp</dimen>
 </resources>
