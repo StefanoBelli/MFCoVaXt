@@ -187,7 +187,6 @@ class VaxDataViewModel : ViewModel() {
     ) {
         if(shouldUpdateVaxData[vaxData]!! && EzNetwork.connected(appContext) &&
                 !isUpdatingLastUpdateDataset) {
-
             shouldUpdateVaxData[vaxData] = false // immediate locking from [main] thread
             Http.getInstance(appContext).addToRequestQueue(CsvRequest(urls[vaxData],
                     { response ->
@@ -199,7 +198,7 @@ class VaxDataViewModel : ViewModel() {
                         errorListener.invoke(error)
                         shouldUpdateVaxData[vaxData] = true // unlocking from another thread
                     }))
-        } else if(shouldReloadVaxData[vaxData]!!) {
+        } else if(shouldReloadVaxData[vaxData]!! && !shouldUpdateVaxData[vaxData]!!) {
             shouldReloadVaxData[vaxData] = false // immediate locking from [main] thread
             viewModelScope.launch(Dispatchers.Default) {
                 loadVaxDataFromLocalDb(vaxData)
