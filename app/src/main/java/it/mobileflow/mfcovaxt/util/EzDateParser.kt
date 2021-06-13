@@ -29,5 +29,11 @@ class EzDateParser {
 
             return d!!
         }
+
+        fun dateTimeToStr(dt: Date, context: Context) : String {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                    context.resources.configuration.locales[0])
+            return dateFormat.format(dt)
+        }
     }
 }

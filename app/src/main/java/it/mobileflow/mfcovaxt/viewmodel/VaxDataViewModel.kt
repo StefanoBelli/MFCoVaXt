@@ -15,6 +15,7 @@ import it.mobileflow.mfcovaxt.util.EzAppDataUpdateTracker
 import it.mobileflow.mfcovaxt.util.EzDateParser
 import it.mobileflow.mfcovaxt.util.EzNetwork
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.commons.csv.CSVRecord
@@ -121,8 +122,15 @@ class VaxDataViewModel : ViewModel() {
 
         return if(isUpdatingLastUpdateDataset)
             LudError.UPDATE_IN_PROGRESS
-        else
+        else {
+            viewModelScope.launch(Dispatchers.IO) {
+                val lud = db.getLastUpdateDatasetDao().getLastUpdateDataset()
+                withContext(Dispatchers.Main) {
+                    lastUpdateDatasetDate.value = lud[0].lastUpdate
+                }
+            }
             LudError.NO_CONNECTIVITY
+        }
     }
 
     private suspend fun updateLastUpdateDataset(

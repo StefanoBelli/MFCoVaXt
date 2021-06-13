@@ -37,14 +37,14 @@
 
         <TextView
             android:id="@+id/lastUpdatedOnTv"
-            android:layout_width="332dp"
-            android:layout_height="29dp"
-            android:layout_marginTop="144dp"
+            android:layout_width="385dp"
+            android:layout_height="34dp"
+            android:layout_marginTop="140dp"
             android:text="@string/last_updated_on_waiting_data"
             android:textSize="@dimen/small_text_size"
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.491"
+            app:layout_constraintHorizontal_bias="0.615"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -106,19 +106,6 @@
             app:layout_constraintHorizontal_bias="0.919"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/group_person" />
-
-        <TextView
-            android:id="@+id/fullyVaxedPercFrom12AgeTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/waiting_for_data"
-            android:textSize="@dimen/smaller_text_size"
-            android:textStyle="italic"
-            app:layout_constraintEnd_toStartOf="@+id/peopleIv"
-            app:layout_constraintHorizontal_bias="0.53"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fullyVaxedNumTv" />
 
         <TextView
             android:id="@+id/fullyVaxedNumTv"
@@ -498,7 +485,7 @@
                             android:text="@string/waiting_for_data" />
 
                         <TextView
-                            android:id="@+id/pabDelTv"
+                            android:id="@+id/pabDelivTv"
                             android:padding="@dimen/mid_table_data_pad"
                             android:text="@string/waiting_for_data" />
 
@@ -725,17 +712,20 @@
                             android:padding="@dimen/header_and_trailer_pad"
                             android:background="@color/gray"/>
 
-                        <TextView android:text="@string/waiting_for_data"
+                        <TextView android:id="@+id/italyInjTv"
+                            android:text="@string/waiting_for_data"
                             android:textStyle="bold"
                             android:padding="@dimen/header_and_trailer_pad"
                             android:background="@color/gray"/>
 
-                        <TextView android:text="@string/waiting_for_data"
+                        <TextView android:id="@+id/italyDelivTv"
+                            android:text="@string/waiting_for_data"
                             android:textStyle="bold"
                             android:padding="@dimen/header_and_trailer_pad"
                             android:background="@color/gray"/>
 
-                        <TextView android:text="@string/waiting_for_data"
+                        <TextView android:id="@+id/italyPercTv"
+                            android:text="@string/waiting_for_data"
                             android:textStyle="bold"
                             android:padding="@dimen/header_and_trailer_pad"
                             android:background="@color/gray"/>
