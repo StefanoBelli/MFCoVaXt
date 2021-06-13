@@ -484,7 +484,55 @@
                     </TableRow>
 
                     <TableRow
-                        tools:ignore="TooManyViews"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            tools:ignore="TooManyViews"
+                            android:padding="@dimen/mid_table_data_pad"
+                            android:text="@string/pab" />
+
+                        <TextView
+                            android:id="@+id/pabInjTv"
+                            android:padding="@dimen/mid_table_data_pad"
+                            android:text="@string/waiting_for_data" />
+
+                        <TextView
+                            android:id="@+id/pabDelTv"
+                            android:padding="@dimen/mid_table_data_pad"
+                            android:text="@string/waiting_for_data" />
+
+                        <TextView
+                            android:id="@+id/pabPercTv"
+                            android:padding="@dimen/mid_table_data_pad"
+                            android:text="@string/waiting_for_data" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:padding="@dimen/mid_table_data_pad"
+                            android:text="@string/pat" />
+
+                        <TextView
+                            android:id="@+id/patInjTv"
+                            android:padding="@dimen/mid_table_data_pad"
+                            android:text="@string/waiting_for_data" />
+
+                        <TextView
+                            android:id="@+id/patDelivTv"
+                            android:padding="@dimen/mid_table_data_pad"
+                            android:text="@string/waiting_for_data" />
+
+                        <TextView
+                            android:id="@+id/patPercTv"
+                            android:padding="@dimen/mid_table_data_pad"
+                            android:text="@string/waiting_for_data" />
+                    </TableRow>
+
+                    <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
@@ -572,52 +620,6 @@
 
                         <TextView
                             android:id="@+id/sicPercTv"
-                            android:text="@string/waiting_for_data"
-                            android:padding="@dimen/mid_table_data_pad"/>
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView android:text="@string/pab"
-                            android:padding="@dimen/mid_table_data_pad"/>
-
-                        <TextView
-                            android:id="@+id/pabInjTv"
-                            android:text="@string/waiting_for_data"
-                            android:padding="@dimen/mid_table_data_pad"/>
-
-                        <TextView
-                            android:id="@+id/pabDelivTv"
-                            android:text="@string/waiting_for_data"
-                            android:padding="@dimen/mid_table_data_pad"/>
-
-                        <TextView
-                            android:id="@+id/pabPercTv"
-                            android:text="@string/waiting_for_data"
-                            android:padding="@dimen/mid_table_data_pad"/>
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView android:text="@string/pat"
-                            android:padding="@dimen/mid_table_data_pad" />
-
-                        <TextView
-                            android:id="@+id/patInjTv"
-                            android:text="@string/waiting_for_data"
-                            android:padding="@dimen/mid_table_data_pad"/>
-
-                        <TextView
-                            android:id="@+id/patDelivTv"
-                            android:text="@string/waiting_for_data"
-                            android:padding="@dimen/mid_table_data_pad" />
-
-                        <TextView
-                            android:id="@+id/patPercTv"
                             android:text="@string/waiting_for_data"
                             android:padding="@dimen/mid_table_data_pad"/>
                     </TableRow>
