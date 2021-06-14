@@ -125,8 +125,10 @@ class VaxDataViewModel : ViewModel() {
         else {
             viewModelScope.launch(Dispatchers.IO) {
                 val lud = db.getLastUpdateDatasetDao().getLastUpdateDataset()
-                withContext(Dispatchers.Main) {
-                    lastUpdateDatasetDate.value = lud[0].lastUpdate
+                if(lud.size == 1) {
+                    withContext(Dispatchers.Main) {
+                        lastUpdateDatasetDate.value = lud[0].lastUpdate
+                    }
                 }
             }
             LudError.NO_CONNECTIVITY

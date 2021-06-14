@@ -1,5 +1,6 @@
 package it.mobileflow.mfcovaxt.activity
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
@@ -45,6 +46,8 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     companion object {
         private const val ALREADY_STARTED_KEY = "already_started"
+        private const val FIRST_TIME_KEY = "first_time"
+        private const val SHPREFS = "it.mobileflow.mfcovaxt_rand493872414267186"
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -200,16 +203,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTargetedUpdate() {
+        val shprefs = getSharedPreferences(SHPREFS, MODE_PRIVATE)
         if(vaxDataViewModel.lastUpdateDataset(applicationContext, {
+                    shprefs.edit().putBoolean(FIRST_TIME_KEY, false).apply()
                     vaxDataViewModel.populateVaxData(
                             VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext, {})
                     vaxDataViewModel.populateVaxData(
                             VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext, {})
         },{}) == VaxDataViewModel.LudError.NO_CONNECTIVITY) {
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext, {})
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext, {})
+            if(shprefs.getBoolean(FIRST_TIME_KEY, true)) {
+                dismissDialogIfShowing()
+                AlertDialog.Builder(this)
+                        .setTitle(R.string.need_internet)
+                        .setMessage(R.string.no_data_need_internet)
+                        .setCancelable(false)
+                        .setNeutralButton(R.string.exit_app)
+                            { _: DialogInterface, _: Int -> finish() }
+                        .create().show()
+            } else {
+                vaxDataViewModel.populateVaxData(
+                        VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext, {})
+                vaxDataViewModel.populateVaxData(
+                        VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext, {})
+            }
         }
     }
 
