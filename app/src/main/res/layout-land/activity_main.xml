@@ -478,10 +478,10 @@
 
                         <TextView
                             android:padding="@dimen/mid_table_data_pad"
-                            android:text="@string/pab"
-                            tools:ignore="TooManyViews" />
+                            android:text="@string/pab" />
 
                         <TextView
+                            tools:ignore="TooManyViews"
                             android:id="@+id/pabInjTv"
                             android:padding="@dimen/mid_table_data_pad"
                             android:text="@string/waiting_for_data" />
