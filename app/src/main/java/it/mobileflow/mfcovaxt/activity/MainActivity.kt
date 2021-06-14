@@ -169,26 +169,22 @@ class MainActivity : AppCompatActivity() {
             binding.italyInjTv.text = fmtTotalInjsItaly
             binding.italyDelivTv.text = fmtTotalDelivItaly
             binding.italyPercTv.text = fmtPercInjsItaly
+            binding.totalInjNumTv.text = fmtTotalInjsItaly
         }
     }
 
     private suspend fun setTotalInjsAndTotalVaxed() {
         val injs = vaxDataViewModel.vaxInjections.value!!
-        var totInjs = 0
         var totVaxed = 0
 
         for(inj in injs) {
-            totInjs += inj.firstInj + inj.secondInj
-            totVaxed += if(inj.vaxName == "Janssen") {
-                inj.firstInj
-            } else {
-                inj.secondInj
-            }
+            totVaxed += if(inj.vaxName == "Janssen") inj.firstInj else inj.secondInj
         }
 
+        val fmtTotVaxed = EzNumberFormatting.format(baseContext, totVaxed)
+
         withContext(Dispatchers.Main) {
-            binding.totalInjNumTv.text = EzNumberFormatting.format(baseContext,totInjs)
-            binding.fullyVaxedNumTv.text = EzNumberFormatting.format(baseContext, totVaxed)
+            binding.fullyVaxedNumTv.text = fmtTotVaxed
         }
     }
 
