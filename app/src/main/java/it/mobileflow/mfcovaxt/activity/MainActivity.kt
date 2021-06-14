@@ -67,7 +67,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setLiveDataObservers() {
         vaxDataViewModel.lastUpdateDatasetDate.observe(this, {
-            setLastUpdateDatasetDate()
+            lifecycleScope.launch(Dispatchers.Default) {
+                setLastUpdateDatasetDate()
+            }
             dismissDialogIfShowing()
         })
 
@@ -80,15 +82,13 @@ class MainActivity : AppCompatActivity() {
 
         vaxDataViewModel.vaxStatsSummariesByArea.observe(this, {
             lifecycleScope.launch(Dispatchers.Default) {
-                withContext(Dispatchers.Main) {
-                    setAreaStatsInjsTable()
-                    dismissDialogIfShowing()
-                }
+                setAreaStatsInjsTable()
             }
+            dismissDialogIfShowing()
         })
     }
 
-    private fun setAreaStatsInjsTable() {
+    private suspend fun setAreaStatsInjsTable() {
         val abr = vaxDataViewModel.vaxStatsSummariesByArea.value!![0]
         val bas = vaxDataViewModel.vaxStatsSummariesByArea.value!![1]
         val cal = vaxDataViewModel.vaxStatsSummariesByArea.value!![2]
@@ -145,19 +145,31 @@ class MainActivity : AppCompatActivity() {
             totalInjsItaly += arrData[iDivThree].totalInjs
             totalDeliveriesItaly += arrData[iDivThree].totalDelivVaxes
 
-            arrView[i].text = EzNumberFormatting.format(this, arrData[iDivThree].totalInjs)
-            arrView[i + 1].text = EzNumberFormatting.format(this,
+            val fmtTotalInjs = EzNumberFormatting.format(this, arrData[iDivThree].totalInjs)
+            val fmtTotalDeliv = EzNumberFormatting.format(this,
                     arrData[iDivThree].totalDelivVaxes)
-            arrView[i + 2].text = String.format(
+            val fmtPercInjs = String.format(
                     baseContext.resources.configuration.locales[0],
                     "%.1f", arrData[iDivThree].percInjs)
+
+            withContext(Dispatchers.Main) {
+                arrView[i].text = fmtTotalInjs
+                arrView[i + 1].text = fmtTotalDeliv
+                arrView[i + 2].text = fmtPercInjs
+            }
         }
 
-        binding.italyInjTv.text = EzNumberFormatting.format(this, totalInjsItaly)
-        binding.italyDelivTv.text = EzNumberFormatting.format(this, totalDeliveriesItaly)
-        binding.italyPercTv.text = String.format(
+        val fmtTotalInjsItaly = EzNumberFormatting.format(this, totalInjsItaly)
+        val fmtTotalDelivItaly = EzNumberFormatting.format(this, totalDeliveriesItaly)
+        val fmtPercInjsItaly = String.format(
                 baseContext.resources.configuration.locales[0],
                 "%.1f", (100f * totalInjsItaly) / totalDeliveriesItaly)
+
+        withContext(Dispatchers.Main) {
+            binding.italyInjTv.text = fmtTotalInjsItaly
+            binding.italyDelivTv.text = fmtTotalDelivItaly
+            binding.italyPercTv.text = fmtPercInjsItaly
+        }
     }
 
     private suspend fun setTotalInjsAndTotalVaxed() {
@@ -180,12 +192,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setLastUpdateDatasetDate() {
-        binding.lastUpdatedOnTv.text =
-                String.format(getString(R.string.last_updated_on_fmt),
-                        EzDateParser.dateTimeToStr(
-                                vaxDataViewModel.lastUpdateDatasetDate.value!!,
-                                this))
+    private suspend fun setLastUpdateDatasetDate() {
+        val fmtLastUpdatedDate = String.format(getString(R.string.last_updated_on_fmt),
+                EzDateParser.dateTimeToStr(
+                        vaxDataViewModel.lastUpdateDatasetDate.value!!,
+                        this))
+
+        withContext(Dispatchers.Main) {
+            binding.lastUpdatedOnTv.text = fmtLastUpdatedDate
+        }
     }
 
     private fun startTargetedUpdate() {
