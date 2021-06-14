@@ -179,11 +179,11 @@ class MainActivity : AppCompatActivity() {
 
         for(inj in injs) {
             totInjs += inj.firstInj + inj.secondInj
-            totVaxed += inj.secondInj /*+ if(inj.vaxName == "Jannsen") {
+            totVaxed += if(inj.vaxName == "Janssen") {
                 inj.firstInj
             } else {
-                0
-            }*/
+                inj.secondInj
+            }
         }
 
         withContext(Dispatchers.Main) {
