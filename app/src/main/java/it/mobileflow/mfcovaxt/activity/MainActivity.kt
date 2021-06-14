@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
@@ -15,6 +16,11 @@ import it.mobileflow.mfcovaxt.factory.VaxDataViewModelFactory
 import it.mobileflow.mfcovaxt.util.EzDateParser
 import it.mobileflow.mfcovaxt.util.EzNumberFormatting
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withContext
+import java.util.*
 
 /**
  * define procedure update():
@@ -65,14 +71,20 @@ class MainActivity : AppCompatActivity() {
             dismissDialogIfShowing()
         })
 
-        vaxDataViewModel.vaxInjectionsSummariesByAgeRange.observe(this, {
-            setTotalInjsAndTotalVaxed()
+        vaxDataViewModel.vaxInjections.observe(this, {
+            lifecycleScope.launch(Dispatchers.Default) {
+                setTotalInjsAndTotalVaxed()
+            }
             dismissDialogIfShowing()
         })
 
         vaxDataViewModel.vaxStatsSummariesByArea.observe(this, {
-            setAreaStatsInjsTable()
-            dismissDialogIfShowing()
+            lifecycleScope.launch(Dispatchers.Default) {
+                withContext(Dispatchers.Main) {
+                    setAreaStatsInjsTable()
+                    dismissDialogIfShowing()
+                }
+            }
         })
     }
 
@@ -127,37 +139,45 @@ class MainActivity : AppCompatActivity() {
 
         var totalInjsItaly = 0
         var totalDeliveriesItaly = 0
-        var totalPercItaly = 0f
 
         for(i in 0 until 62 step 3) {
             val iDivThree = i / 3
             totalInjsItaly += arrData[iDivThree].totalInjs
             totalDeliveriesItaly += arrData[iDivThree].totalDelivVaxes
-            totalPercItaly += arrData[iDivThree].percInjs
 
             arrView[i].text = EzNumberFormatting.format(this, arrData[iDivThree].totalInjs)
             arrView[i + 1].text = EzNumberFormatting.format(this,
                     arrData[iDivThree].totalDelivVaxes)
-            arrView[i + 2].text = arrData[iDivThree].percInjs.toString()
+            arrView[i + 2].text = String.format(
+                    baseContext.resources.configuration.locales[0],
+                    "%.1f", arrData[iDivThree].percInjs)
         }
 
         binding.italyInjTv.text = EzNumberFormatting.format(this, totalInjsItaly)
         binding.italyDelivTv.text = EzNumberFormatting.format(this, totalDeliveriesItaly)
-        binding.italyPercTv.text = (totalPercItaly / 21).toString()
+        binding.italyPercTv.text = String.format(
+                baseContext.resources.configuration.locales[0],
+                "%.1f", (100f * totalInjsItaly) / totalDeliveriesItaly)
     }
 
-    private fun setTotalInjsAndTotalVaxed() {
-        val ageRanges = vaxDataViewModel.vaxInjectionsSummariesByAgeRange.value!!
+    private suspend fun setTotalInjsAndTotalVaxed() {
+        val injs = vaxDataViewModel.vaxInjections.value!!
         var totInjs = 0
         var totVaxed = 0
 
-        for(ageRange in ageRanges) {
-            totInjs += ageRange.totalInj
-            totVaxed += ageRange.secondInjs
+        for(inj in injs) {
+            totInjs += inj.firstInj + inj.secondInj
+            totVaxed += inj.secondInj /*+ if(inj.vaxName == "Jannsen") {
+                inj.firstInj
+            } else {
+                0
+            }*/
         }
 
-        binding.totalInjNumTv.text = EzNumberFormatting.format(this,totInjs)
-        binding.fullyVaxedNumTv.text = EzNumberFormatting.format(this, totVaxed)
+        withContext(Dispatchers.Main) {
+            binding.totalInjNumTv.text = EzNumberFormatting.format(baseContext,totInjs)
+            binding.fullyVaxedNumTv.text = EzNumberFormatting.format(baseContext, totVaxed)
+        }
     }
 
     private fun setLastUpdateDatasetDate() {
@@ -170,13 +190,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun startTargetedUpdate() {
         if(vaxDataViewModel.lastUpdateDataset(applicationContext, {
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE, applicationContext, {})
-            vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext, {})
+                    vaxDataViewModel.populateVaxData(
+                            VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext, {})
+                    vaxDataViewModel.populateVaxData(
+                            VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext, {})
         },{}) == VaxDataViewModel.LudError.NO_CONNECTIVITY) {
             vaxDataViewModel.populateVaxData(
-                    VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE, applicationContext, {})
+                    VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext, {})
             vaxDataViewModel.populateVaxData(
                     VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext, {})
         }
