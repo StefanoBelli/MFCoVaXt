@@ -67,7 +67,7 @@
             android:text="@string/waiting_for_data"
             android:textSize="@dimen/med_text_size"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.713"
+            app:layout_constraintHorizontal_bias="0.674"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -733,5 +733,19 @@
                 </TableLayout>
             </HorizontalScrollView>
         </androidx.core.widget.NestedScrollView>
+
+        <Button
+            android:id="@+id/totInjByAgeRangeBtn"
+            android:layout_width="214dp"
+            android:layout_height="34dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:text="@string/tot_inj_by_age_range"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/verysmall_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/totalInjNumTv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.291"
+            app:layout_constraintStart_toEndOf="@+id/medsIv" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

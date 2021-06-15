@@ -47,4 +47,5 @@
         connection to download data, as of now, local database is empty!
         Turn on your internet connection or exit application.</string>
     <string name="exit_app">Exit application</string>
+    <string name="tot_inj_by_age_range">Total injections by age range</string>
 </resources>

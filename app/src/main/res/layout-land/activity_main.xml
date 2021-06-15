@@ -481,10 +481,10 @@
                             android:text="@string/pab" />
 
                         <TextView
-                            tools:ignore="TooManyViews"
                             android:id="@+id/pabInjTv"
                             android:padding="@dimen/mid_table_data_pad"
-                            android:text="@string/waiting_for_data" />
+                            android:text="@string/waiting_for_data"
+                            tools:ignore="TooManyViews" />
 
                         <TextView
                             android:id="@+id/pabDelivTv"
@@ -747,5 +747,20 @@
                 </TableLayout>
             </HorizontalScrollView>
         </androidx.core.widget.NestedScrollView>
+
+        <Button
+            android:id="@+id/totInjByAgeRangeBtn"
+            android:layout_width="214dp"
+            android:layout_height="34dp"
+            android:background="@android:color/transparent"
+            android:text="@string/tot_inj_by_age_range"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/verysmall_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/injLocationsBtn"
+            app:layout_constraintEnd_toStartOf="@+id/injByAreaTlSv"
+            app:layout_constraintHorizontal_bias="0.432"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/totalInjNumTv"
+            app:layout_constraintVertical_bias="1.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

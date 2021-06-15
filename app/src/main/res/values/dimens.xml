@@ -6,4 +6,5 @@
     <dimen name="smaller_text_size">17sp</dimen>
     <dimen name="header_and_trailer_pad">5dp</dimen>
     <dimen name="mid_table_data_pad">3dp</dimen>
+    <dimen name="verysmall_text_size">10sp</dimen>
 </resources>
