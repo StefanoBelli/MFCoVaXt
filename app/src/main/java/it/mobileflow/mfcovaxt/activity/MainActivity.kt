@@ -55,7 +55,27 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
 
         showInitialLoadingDialog()
         setLiveDataObservers()
+        setOnClickListeners()
+
         LudScheduler.scheduleUpdate()
+    }
+
+    private fun setOnClickListeners() {
+        binding.refreshFab.setOnClickListener {
+            LudScheduler.scheduleUpdate()
+        }
+
+        binding.totInjByAgeRangeBtn.setOnClickListener {
+
+        }
+
+        binding.injLocationsBtn.setOnClickListener {
+
+        }
+
+        binding.plotBtn.setOnClickListener {
+
+        }
     }
 
     private fun setLiveDataObservers() {
@@ -239,6 +259,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         performedScheduling: Boolean,
         ludErr: VaxDataViewModel.LudError
     ) {
+        Log.e("MFCoVaXt", "update check")
         val shprefs = getSharedPreferences(SHPREFS, MODE_PRIVATE)
         if(performedScheduling) {
             if(ludErr == VaxDataViewModel.LudError.NO_CONNECTIVITY) {
