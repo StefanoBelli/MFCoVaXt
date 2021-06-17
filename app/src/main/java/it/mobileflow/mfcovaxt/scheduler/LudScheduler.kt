@@ -28,36 +28,33 @@ object LudScheduler {
             if (canUpdateBecauseOnline) {
                 when(
                     viewModel.lastUpdateDataset(appContext,
-                    { notifyAllSubscribers(true, VaxDataViewModel.LudError.OK, it) },
-                    { volleyErrorHandler(appContext,it, "LudScheduler.scheduleUpdate()") })
+                    { notifyAllSubscribers(true, VaxDataViewModel.LudError.OK) },
+                    { volleyErrorHandler(appContext, it, "LudScheduler.scheduleUpdate()") })
                 ) {
                     VaxDataViewModel.LudError.OK -> {
                         enqueueOtwrByTimeConstraint(okUpdateEveryMs)
                     }
                     VaxDataViewModel.LudError.UPDATE_IN_PROGRESS -> {
                         enqueueOtwrByTimeConstraint(updateInProgressUpdateEveryMs)
-                        notifyAllSubscribers(true, VaxDataViewModel.LudError.UPDATE_IN_PROGRESS,
-                            false)
+                        notifyAllSubscribers(true, VaxDataViewModel.LudError.UPDATE_IN_PROGRESS)
                     }
                     VaxDataViewModel.LudError.NO_CONNECTIVITY ->  {
                         enqueueOtwrByConnectivityChangeConstraint()
                         canUpdateBecauseOnline = false
-                        notifyAllSubscribers(true, VaxDataViewModel.LudError.NO_CONNECTIVITY,
-                            false)
+                        notifyAllSubscribers(true, VaxDataViewModel.LudError.NO_CONNECTIVITY)
                     }
                 }
             } else {
-                notifyAllSubscribers(false, VaxDataViewModel.LudError.NO_CONNECTIVITY,
-                    false)
+                notifyAllSubscribers(false, VaxDataViewModel.LudError.NO_CONNECTIVITY)
             }
         }
     }
 
-    fun addSubscriber(subscriber : LudSchedulerSubscriber) {
+    fun subscribe(subscriber : LudSchedulerSubscriber) {
         subscribers.add(subscriber)
     }
 
-    fun delSubscriber(subscriber : LudSchedulerSubscriber) {
+    fun unsubscribe(subscriber : LudSchedulerSubscriber) {
         subscribers.remove(subscriber)
     }
 
@@ -89,9 +86,9 @@ object LudScheduler {
         enqueueWorkRequest(otwr)
     }
 
-    private fun notifyAllSubscribers(ps: Boolean, le: VaxDataViewModel.LudError, ins: Boolean) {
+    private fun notifyAllSubscribers(ps: Boolean, le: VaxDataViewModel.LudError) {
         for(subscriber in subscribers) {
-            subscriber.onSchedulingResult(ps, le, ins)
+            subscriber.onSchedulingResult(ps, le)
         }
     }
 }

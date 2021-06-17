@@ -98,7 +98,7 @@ class VaxDataViewModel : ViewModel() {
      */
     fun lastUpdateDataset(
             appContext: Context,
-            doneListener: ((Boolean)->Unit),
+            doneListener: (()->Unit),
             errorListener: ((VolleyError)->Unit)
     ) : LudError {
         if(!isUpdatingLastUpdateDataset && EzNetwork.connected(appContext)) {
@@ -137,7 +137,7 @@ class VaxDataViewModel : ViewModel() {
 
     private suspend fun updateLastUpdateDataset(
         lastUpdateIso8601: String,
-        doneListener: ((Boolean)->Unit),
+        doneListener: (()->Unit),
         appContext: Context
     ) {
         val lastUpdate = EzDateParser.parseIso8601TzUTC(lastUpdateIso8601, appContext)
@@ -149,23 +149,19 @@ class VaxDataViewModel : ViewModel() {
             lastUpdateDataset = lastUpdateDatasetDao.getLastUpdateDataset()
         }
 
-        var inSync = true
         if(lastUpdateDataset.isEmpty()) {
             lastUpdateDatasetDao.insert(LastUpdateDataset(0, lastUpdate))
             shouldUpdateEveryVaxData()
-            inSync = false
         } else {
             val localLastUpdateDate = lastUpdateDataset[0].lastUpdate
             if (lastUpdate.after(localLastUpdateDate)) {
                 lastUpdateDatasetDao.update(LastUpdateDataset(0, lastUpdate))
                 shouldUpdateEveryVaxData()
-                inSync = false
             } else {
                 for(key in shouldUpdateVaxData.keys) {
                     if(EzAppDataUpdateTracker
                                     .getLastUpdate(key, appContext).before(localLastUpdateDate)) {
                         shouldUpdateVaxData[key] = true // potentially unlock populateVaxData
-                        inSync = false
                     }
                 }
             }
@@ -177,7 +173,7 @@ class VaxDataViewModel : ViewModel() {
 
         isUpdatingLastUpdateDataset = false // unlocked from another thread
         withContext(Dispatchers.Main) {
-            doneListener.invoke(inSync)
+            doneListener.invoke()
         }
     }
 

@@ -6,10 +6,12 @@ import android.util.Log
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
@@ -18,6 +20,7 @@ import it.mobileflow.mfcovaxt.scheduler.LudScheduler
 import it.mobileflow.mfcovaxt.scheduler.LudSchedulerSubscriber
 import it.mobileflow.mfcovaxt.util.EzDateParser
 import it.mobileflow.mfcovaxt.util.EzNumberFormatting
+import it.mobileflow.mfcovaxt.util.volleyErrorHandler
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,6 +38,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     private lateinit var binding: ActivityMainBinding
     private lateinit var vaxDataViewModel: VaxDataViewModel
     private lateinit var initialLoadingDialog: AlertDialog
+    private var needInternetDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +51,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
 
         LudScheduler.appContext = applicationContext
         LudScheduler.viewModel = vaxDataViewModel
-        LudScheduler.addSubscriber(this)
+        LudScheduler.subscribe(this)
 
         showInitialLoadingDialog()
         setLiveDataObservers()
@@ -228,16 +232,52 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     override fun onDestroy() {
         super.onDestroy()
         LudScheduler.cancelCoros()
-        LudScheduler.delSubscriber(this)
+        LudScheduler.unsubscribe(this)
     }
 
     override fun onSchedulingResult(
         performedScheduling: Boolean,
-        ludErr: VaxDataViewModel.LudError,
-        inSync: Boolean
+        ludErr: VaxDataViewModel.LudError
     ) {
-        // val shprefs = getSharedPreferences(SHPREFS, MODE_PRIVATE)
-        // shprefs.edit().putBoolean(FIRST_TIME_KEY, false).apply()
-        // if(shprefs.getBoolean(FIRST_TIME_KEY, true)) {}
+        val shprefs = getSharedPreferences(SHPREFS, MODE_PRIVATE)
+        if(performedScheduling) {
+            if(ludErr == VaxDataViewModel.LudError.NO_CONNECTIVITY) {
+                if (shprefs.getBoolean(FIRST_TIME_KEY, true)) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        dismissDialogIfShowing()
+                        needInternetDialog = AlertDialog.Builder(this@MainActivity)
+                                .setTitle(R.string.need_internet)
+                                .setMessage(R.string.no_data_need_internet)
+                                .setCancelable(false)
+                                .setNeutralButton(R.string.exit_app)
+                                { _: DialogInterface, _: Int -> finish() }
+                                .create()
+                        needInternetDialog!!.show()
+                    }
+                } else {
+                    populateRightVaxData()
+                }
+            } else if(ludErr == VaxDataViewModel.LudError.UPDATE_IN_PROGRESS) {
+                Toast.makeText(this,R.string.update_in_progress, Toast.LENGTH_SHORT).show()
+            } else {
+                if(needInternetDialog != null && needInternetDialog?.isShowing == true) {
+                    needInternetDialog!!.dismiss()
+                }
+                populateRightVaxData()
+                shprefs.edit().putBoolean(FIRST_TIME_KEY, false).apply()
+            }
+        }
+    }
+
+    private fun populateRightVaxData() {
+        val hereVolleyErrorMsg = "MainActivity.populateRightVaxData"
+        vaxDataViewModel.populateVaxData(
+                VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext
+        ) { volleyErrorHandler(this, it,
+                "$hereVolleyErrorMsg [VaxInjections]") }
+        vaxDataViewModel.populateVaxData(
+                VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext
+        ) { volleyErrorHandler(this, it,
+                "$hereVolleyErrorMsg [VaxStatsSummariesByArea]") }
     }
 }
