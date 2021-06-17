@@ -262,6 +262,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         val shprefs = getSharedPreferences(SHPREFS, MODE_PRIVATE)
         if(performedScheduling) {
             if(ludErr == VaxDataViewModel.LudError.NO_CONNECTIVITY) {
+                Log.e("MFCoVaXt", "update request no conn")
                 if (shprefs.getBoolean(FIRST_TIME_KEY, true)) {
                     lifecycleScope.launch(Dispatchers.Main) {
                         dismissDialogIfShowing()
@@ -278,8 +279,10 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                     populateRightVaxData()
                 }
             } else if(ludErr == VaxDataViewModel.LudError.UPDATE_IN_PROGRESS) {
+                Log.e("MFCoVaXt", "update request update in progress")
                 Toast.makeText(this,R.string.update_in_progress, Toast.LENGTH_SHORT).show()
             } else {
+                Log.e("MFCoVaXt", "update request ok")
                 if(needInternetDialog != null && needInternetDialog?.isShowing == true) {
                     needInternetDialog!!.dismiss()
                 }

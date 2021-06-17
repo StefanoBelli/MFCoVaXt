@@ -6,14 +6,7 @@ import androidx.work.WorkerParameters
 
 class ScheduleUpdateWorker(ac: Context, wp: WorkerParameters): Worker(ac, wp) {
     override fun doWork(): Result {
-        val ms = inputData.getLong(LudScheduler.WAIT_ONCE_KEY_FOR_WORKER, 0)
-
-        if(ms == 0L) {
-            LudScheduler.alterConnectionStateDoNotCallThisFromAnywhere()
-        } else {
-            Thread.sleep(ms)
-        }
-
+        LudScheduler.canUpdateBecauseOnlineYouShouldNotChangeThis = true
         LudScheduler.scheduleUpdate()
         return Result.success()
     }

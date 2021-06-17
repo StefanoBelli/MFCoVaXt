@@ -5,13 +5,11 @@ import androidx.work.*
 import it.mobileflow.mfcovaxt.util.volleyErrorHandler
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 import kotlinx.coroutines.*
+import java.util.concurrent.TimeUnit
 
 
 object LudScheduler {
-    const val WAIT_ONCE_KEY_FOR_WORKER = "wait_once"
-
     private const val UNIQUE_WORK_NAME = "auto_ludsched"
-    private var canUpdateBecauseOnline = true
     private var ludSchedulerScope = CoroutineScope(Dispatchers.Default)
     private var subscribers = mutableListOf<LudSchedulerSubscriber>()
 
@@ -20,27 +18,30 @@ object LudScheduler {
      */
     lateinit var viewModel : VaxDataViewModel
     lateinit var appContext : Context
-    var okUpdateEveryMs : Long = 1800000 // 30 mins
-    var updateInProgressUpdateEveryMs : Long = 30000 // 30 secs
+
+    /*
+     * !!! public property that shall *not* be changed !!! (see ScheduleUpdateWorker)
+     */
+    var canUpdateBecauseOnlineYouShouldNotChangeThis = true
 
     fun scheduleUpdate() {
         ludSchedulerScope.launch {
-            if (canUpdateBecauseOnline) {
+            if (canUpdateBecauseOnlineYouShouldNotChangeThis) {
                 when(
                     viewModel.lastUpdateDataset(appContext,
                     { notifyAllSubscribers(true, VaxDataViewModel.LudError.OK) },
                     { volleyErrorHandler(appContext, it, "LudScheduler.scheduleUpdate()") })
                 ) {
                     VaxDataViewModel.LudError.OK -> {
-                        enqueueOtwrByTimeConstraint(okUpdateEveryMs)
+                        enqueueOtwrByTimeConstraint(true)
                     }
                     VaxDataViewModel.LudError.UPDATE_IN_PROGRESS -> {
-                        enqueueOtwrByTimeConstraint(updateInProgressUpdateEveryMs)
+                        enqueueOtwrByTimeConstraint(false)
                         notifyAllSubscribers(true, VaxDataViewModel.LudError.UPDATE_IN_PROGRESS)
                     }
                     VaxDataViewModel.LudError.NO_CONNECTIVITY ->  {
                         enqueueOtwrByConnectivityChangeConstraint()
-                        canUpdateBecauseOnline = false
+                        canUpdateBecauseOnlineYouShouldNotChangeThis = false
                         notifyAllSubscribers(true, VaxDataViewModel.LudError.NO_CONNECTIVITY)
                     }
                 }
@@ -62,28 +63,25 @@ object LudScheduler {
         ludSchedulerScope.cancel()
     }
 
-    fun alterConnectionStateDoNotCallThisFromAnywhere() {
-        canUpdateBecauseOnline = true
-    }
-
     private fun enqueueWorkRequest(oneTimeWorkRequest: OneTimeWorkRequest) {
         WorkManager
             .getInstance(appContext)
             .enqueueUniqueWork(UNIQUE_WORK_NAME, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest)
     }
 
-    private fun enqueueOtwrByTimeConstraint(tmMillis : Long) {
-        val data = Data.Builder().putLong(WAIT_ONCE_KEY_FOR_WORKER, tmMillis).build()
-        val otwr = OneTimeWorkRequestBuilder<ScheduleUpdateWorker>().setInputData(data).build()
-        enqueueWorkRequest(otwr)
+    private fun enqueueOtwrByTimeConstraint(isOkUpdate : Boolean) {
+        if(isOkUpdate) {
+            enqueueWorkRequest(OneTimeWorkRequestBuilder<ScheduleUpdateWorker>()
+                .setInitialDelay(300, TimeUnit.SECONDS).build())
+        } else {
+            enqueueWorkRequest(OneTimeWorkRequestBuilder<ScheduleUpdateWorker>()
+                .setInitialDelay(15, TimeUnit.SECONDS).build())
+        }
     }
 
     private fun enqueueOtwrByConnectivityChangeConstraint() {
-        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val otwr = OneTimeWorkRequestBuilder<ScheduleUpdateWorker>().setConstraints(constraints)
-            .build()
-        enqueueWorkRequest(otwr)
+        enqueueWorkRequest(OneTimeWorkRequestBuilder<ScheduleUpdateWorker>().setConstraints(
+            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build())
     }
 
     private fun notifyAllSubscribers(ps: Boolean, le: VaxDataViewModel.LudError) {
