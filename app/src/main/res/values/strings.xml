@@ -48,4 +48,6 @@
         Turn on your internet connection or exit application.</string>
     <string name="exit_app">Exit application</string>
     <string name="tot_inj_by_age_range">Total injections by age range</string>
+    <string name="volley_error_check_logcat">Unusual Volley HTTP library error, please report logcat!</string>
+    <string name="volley_error_msg_logcat">Unusual volley error: start looking from {}</string>
 </resources>

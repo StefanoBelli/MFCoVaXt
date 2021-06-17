@@ -14,6 +14,8 @@ import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
 import it.mobileflow.mfcovaxt.factory.VaxDataViewModelFactory
+import it.mobileflow.mfcovaxt.scheduler.LudScheduler
+import it.mobileflow.mfcovaxt.scheduler.LudSchedulerSubscriber
 import it.mobileflow.mfcovaxt.util.EzDateParser
 import it.mobileflow.mfcovaxt.util.EzNumberFormatting
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
@@ -23,27 +25,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import java.util.*
 
-/**
- * define procedure update():
- *  \@async check for updates
- *  if success then
- *    reschedule next update call in 30 mins
- *  else if no connectivity then
- *    block any update request
- *    schedule next update call when device is online
- *    show snackbar with warning
- *  else // update already in progress
- *    reschedule next update call in 30s
- *    show a toast with warning
- * endproc
- *
- * show dialog saying data is loading...
- * load data from local storage
- * when at least one observer is called, then hide dialog
- * update()
- * setFabClickListener() -> { update() }
- */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     companion object {
         private const val ALREADY_STARTED_KEY = "already_started"
         private const val FIRST_TIME_KEY = "first_time"
@@ -63,9 +45,13 @@ class MainActivity : AppCompatActivity() {
                 .get(VaxDataViewModel::class.java)
         vaxDataViewModel.db = VaxInjectionsStatsDatabase.getInstance(applicationContext)
 
+        LudScheduler.appContext = applicationContext
+        LudScheduler.viewModel = vaxDataViewModel
+        LudScheduler.addSubscriber(this)
+
         showInitialLoadingDialog()
         setLiveDataObservers()
-        startTargetedUpdate()
+        LudScheduler.scheduleUpdate()
     }
 
     private fun setLiveDataObservers() {
@@ -202,33 +188,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startTargetedUpdate() {
-        val shprefs = getSharedPreferences(SHPREFS, MODE_PRIVATE)
-        if(vaxDataViewModel.lastUpdateDataset(applicationContext, {
-                    shprefs.edit().putBoolean(FIRST_TIME_KEY, false).apply()
-                    vaxDataViewModel.populateVaxData(
-                            VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext, {})
-                    vaxDataViewModel.populateVaxData(
-                            VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext, {})
-        },{}) == VaxDataViewModel.LudError.NO_CONNECTIVITY) {
-            if(shprefs.getBoolean(FIRST_TIME_KEY, true)) {
-                dismissDialogIfShowing()
-                AlertDialog.Builder(this)
-                        .setTitle(R.string.need_internet)
-                        .setMessage(R.string.no_data_need_internet)
-                        .setCancelable(false)
-                        .setNeutralButton(R.string.exit_app)
-                            { _: DialogInterface, _: Int -> finish() }
-                        .create().show()
-            } else {
-                vaxDataViewModel.populateVaxData(
-                        VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext, {})
-                vaxDataViewModel.populateVaxData(
-                        VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext, {})
-            }
-        }
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(ALREADY_STARTED_KEY, true)
@@ -264,5 +223,21 @@ class MainActivity : AppCompatActivity() {
         if(initialLoadingDialog.isShowing) {
             initialLoadingDialog.dismiss()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LudScheduler.cancelCoros()
+        LudScheduler.delSubscriber(this)
+    }
+
+    override fun onSchedulingResult(
+        performedScheduling: Boolean,
+        ludErr: VaxDataViewModel.LudError,
+        inSync: Boolean
+    ) {
+        // val shprefs = getSharedPreferences(SHPREFS, MODE_PRIVATE)
+        // shprefs.edit().putBoolean(FIRST_TIME_KEY, false).apply()
+        // if(shprefs.getBoolean(FIRST_TIME_KEY, true)) {}
     }
 }
