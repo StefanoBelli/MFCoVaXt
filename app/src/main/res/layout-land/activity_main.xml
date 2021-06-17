@@ -782,5 +782,7 @@
         android:backgroundTint="@color/blue"
         app:layout_anchor="@id/sv"
         app:layout_anchorGravity="center|end"
-        android:layout_margin="@dimen/fab_margin" />
+        android:layout_margin="@dimen/fab_margin"
+        app:tint="@color/white"
+        app:borderWidth="0dp" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

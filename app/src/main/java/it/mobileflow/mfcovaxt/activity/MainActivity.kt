@@ -259,7 +259,6 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         performedScheduling: Boolean,
         ludErr: VaxDataViewModel.LudError
     ) {
-        Log.e("MFCoVaXt", "update check")
         val shprefs = getSharedPreferences(SHPREFS, MODE_PRIVATE)
         if(performedScheduling) {
             if(ludErr == VaxDataViewModel.LudError.NO_CONNECTIVITY) {
