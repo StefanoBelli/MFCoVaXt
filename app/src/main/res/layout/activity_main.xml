@@ -163,7 +163,8 @@
                 android:textColor="@color/blue"
                 app:layout_constraintEnd_toStartOf="@+id/injLocationsBtn"
                 app:layout_constraintTop_toBottomOf="@+id/injByAreaTlSv"
-                tools:layout_editor_absoluteY="854dp" />
+                tools:layout_editor_absoluteY="854dp"
+                android:enabled="false"/>
 
             <Button
                 android:id="@+id/injLocationsBtn"
@@ -177,7 +178,8 @@
                 android:textColor="@color/blue"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/injByAreaTlSv"
-                tools:layout_editor_absoluteY="854dp" />
+                tools:layout_editor_absoluteY="854dp"
+                android:enabled="false" />
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/injByAreaTlSv"
@@ -778,7 +780,8 @@
                 app:layout_constraintBottom_toTopOf="@+id/totalInjNumTv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.291"
-                app:layout_constraintStart_toEndOf="@+id/medsIv" />
+                app:layout_constraintStart_toEndOf="@+id/medsIv"
+                android:enabled="false"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

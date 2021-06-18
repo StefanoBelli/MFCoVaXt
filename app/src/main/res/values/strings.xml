@@ -54,7 +54,6 @@
     <string name="refresh">Refresh</string>
     <string name="schedule_update_unexpected">Unexpected LudScheduler.scheduleUpdate() request, cannot perform scheduling right now! [OFFLINE]</string>
     <string name="everything_up_to_date">Nothing new to see, everything is up-to-date!</string>
-    <string name="lsu_up_to_date_maybe_no_data">Nothing new to see, however some data will be downloaded as you go through the app!</string>
     <string name="new_data_available">New data available!</string>
     <string name="could_not_detect_internet_conn">Could not detect internet connection</string>
     <string name="an_lsu_update_already_in_progress">An update check is already in progress</string>

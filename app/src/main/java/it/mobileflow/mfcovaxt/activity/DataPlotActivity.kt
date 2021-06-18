@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import it.mobileflow.mfcovaxt.databinding.ActivityDataPlotBinding
-import it.mobileflow.mfcovaxt.factory.VaxDataViewModelFactory
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 
 class DataPlotActivity : AppCompatActivity() {
@@ -15,8 +14,5 @@ class DataPlotActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDataPlotBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        vaxDataViewModel = ViewModelProvider(this, VaxDataViewModelFactory.getInstance())
-                .get(VaxDataViewModel::class.java)
     }
 }

@@ -9,6 +9,7 @@ import android.os.Process.myPid
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -17,7 +18,6 @@ import com.google.android.material.snackbar.Snackbar
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
-import it.mobileflow.mfcovaxt.factory.VaxDataViewModelFactory
 import it.mobileflow.mfcovaxt.scheduler.LudScheduler
 import it.mobileflow.mfcovaxt.scheduler.LudSchedulerSubscriber
 import it.mobileflow.mfcovaxt.util.EzDateParser
@@ -36,10 +36,11 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         private const val FIRST_TIME_KEY = "first_time"
         private const val SHPREFS = "it.mobileflow.mfcovaxt_rand493872414267186"
         private const val VOLLEY_ERROR_MYMSG = "MainActivity.populateRightVaxData()"
+        const val YOUR_DATA_KEY = "your_data"
     }
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var vaxDataViewModel: VaxDataViewModel
+    private val vaxDataViewModel : VaxDataViewModel by viewModels()
     private lateinit var initialLoadingDialog: AlertDialog
     private var needInternetDialog: AlertDialog? = null
     private var wasInternetConnected = true
@@ -49,8 +50,6 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        vaxDataViewModel = ViewModelProvider(this, VaxDataViewModelFactory.getInstance())
-                .get(VaxDataViewModel::class.java)
         vaxDataViewModel.db = VaxInjectionsStatsDatabase.getInstance(applicationContext)
 
         LudScheduler.appContext = applicationContext
@@ -74,7 +73,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         }
 
         binding.totInjByAgeRangeBtn.setOnClickListener {
-            startActivity(Intent(this, InjectionsByAgeRangeActivity::class.java)) //TODO RESET AS UNIQUE SUBSCRIBER
+            
         }
 
         binding.injLocationsBtn.setOnClickListener {
@@ -95,6 +94,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         })
 
         vaxDataViewModel.vaxInjections.observe(this, {
+            binding.plotBtn.isEnabled = true
             lifecycleScope.launch(Dispatchers.Default) {
                 setTotalInjsAndTotalVaxed()
             }
@@ -105,6 +105,16 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
             lifecycleScope.launch(Dispatchers.Default) {
                 setAreaStatsInjsTable()
             }
+            dismissDialogIfShowing()
+        })
+
+        vaxDataViewModel.physicalInjectionLocations.observe(this, {
+            binding.injLocationsBtn.isEnabled = true
+            dismissDialogIfShowing()
+        })
+
+        vaxDataViewModel.vaxInjectionsSummariesByAgeRange.observe(this, {
+            binding.totInjByAgeRangeBtn.isEnabled = true
             dismissDialogIfShowing()
         })
     }
@@ -267,6 +277,14 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                 VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext
         ) { volleyErrorHandler(this, it,
                 "$VOLLEY_ERROR_MYMSG [VaxStatsSummariesByArea]") }
+        vaxDataViewModel.populateVaxData(
+            VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE, applicationContext
+        ) { volleyErrorHandler(this, it,
+            "$VOLLEY_ERROR_MYMSG [VaxInjectionSummariesByAgeRange]") }
+        vaxDataViewModel.populateVaxData(
+            VaxDataViewModel.VaxData.PHYSICAL_INJECTION_LOCATIONS, applicationContext
+        ) { volleyErrorHandler(this, it,
+            "$VOLLEY_ERROR_MYMSG [VaxInjectionSummariesByAgeRange]") }
     }
 
     override fun onLsuUpdateOk(lsuSync: Boolean, dataSync: Boolean) {
@@ -277,8 +295,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
 
         populateRightVaxData()
         getSharedPreferences(SHPREFS, MODE_PRIVATE).edit().putBoolean(FIRST_TIME_KEY, false).apply()
-        val msg = if(lsuSync && dataSync) R.string.everything_up_to_date
-            else if(lsuSync && !dataSync) R.string.lsu_up_to_date_maybe_no_data
+        val msg = if(lsuSync) R.string.everything_up_to_date
             else R.string.new_data_available
         showSnackbar(msg)
         binding.refreshFab.isEnabled = true
