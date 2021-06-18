@@ -15,9 +15,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
+import it.mobileflow.mfcovaxt.entity.VaxInjectionsSummaryByAgeRange
 import it.mobileflow.mfcovaxt.scheduler.LudScheduler
 import it.mobileflow.mfcovaxt.scheduler.LudSchedulerSubscriber
 import it.mobileflow.mfcovaxt.util.EzDateParser
@@ -73,7 +75,11 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         }
 
         binding.totInjByAgeRangeBtn.setOnClickListener {
-            
+            val gson = Gson()
+            val intent = Intent(this, InjectionsByAgeRangeActivity::class.java)
+            intent.putExtra(YOUR_DATA_KEY,
+                gson.toJson(vaxDataViewModel.vaxInjectionsSummariesByAgeRange.value))
+            startActivity(intent)
         }
 
         binding.injLocationsBtn.setOnClickListener {
