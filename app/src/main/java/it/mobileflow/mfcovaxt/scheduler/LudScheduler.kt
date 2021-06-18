@@ -1,18 +1,17 @@
 package it.mobileflow.mfcovaxt.scheduler
 
 import android.content.Context
-import android.util.Log
 import androidx.work.*
 import it.mobileflow.mfcovaxt.util.volleyErrorHandler
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
-import it.mobileflow.mfcovaxt.R
 
 
 object LudScheduler {
     private const val UNIQUE_WORK_NAME = "auto_ludsched"
     private const val VOLLEY_ERROR_MYMSG = "LudScheduler.scheduleUpdate()"
+
     private var ludSchedulerScope = CoroutineScope(Dispatchers.Default)
 
     /*
@@ -55,19 +54,8 @@ object LudScheduler {
         }
     }
 
-    fun cancelAllWork() {
-        WorkManager
-                .getInstance(appContext)
-                .cancelAllWork()
-    }
-
-    fun cancelCoros() {
-        ludSchedulerScope.cancel()
-    }
-
     private fun enqueueWorkRequest(oneTimeWorkRequest: OneTimeWorkRequest) {
-        WorkManager
-            .getInstance(appContext)
+        WorkManager.getInstance(appContext)
             .enqueueUniqueWork(UNIQUE_WORK_NAME, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest)
     }
 

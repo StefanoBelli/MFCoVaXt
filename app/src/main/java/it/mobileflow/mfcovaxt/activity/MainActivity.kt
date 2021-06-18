@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     private var needInternetDialog: AlertDialog? = null
     private var wasInternetConnected = true
 
-    //TODO handle rotation
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -263,12 +262,6 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        LudScheduler.cancelCoros()
-        LudScheduler.cancelAllWork()
-    }
-
     private fun populateRightVaxData() {
         vaxDataViewModel.populateVaxData(
                 VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext
@@ -311,6 +304,8 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                     .setCancelable(false)
                     .setNeutralButton(R.string.exit_app)
                     { _: DialogInterface, _: Int -> killProcess(myPid()) }
+                    .setOnDismissListener()
+                    { requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR }
                     .create()
             needInternetDialog!!.show()
         } else {
@@ -321,6 +316,6 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     }
 
     private fun showSnackbar(strId: Int) {
-        Snackbar.make(binding.rootCl, strId, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.sv, strId, Snackbar.LENGTH_LONG).show()
     }
 }
