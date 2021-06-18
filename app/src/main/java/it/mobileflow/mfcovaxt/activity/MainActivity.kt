@@ -1,7 +1,9 @@
 package it.mobileflow.mfcovaxt.activity
 
 import android.content.DialogInterface
+import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.os.Process.killProcess
 import android.os.Process.myPid
 import android.util.Log
@@ -33,16 +35,20 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     companion object {
+        private const val WAS_INTERNET_CONNECTED_KEY = "was_internet_connected"
         private const val ALREADY_STARTED_KEY = "already_started"
         private const val FIRST_TIME_KEY = "first_time"
         private const val SHPREFS = "it.mobileflow.mfcovaxt_rand493872414267186"
+        private const val VOLLEY_ERROR_MYMSG = "MainActivity.populateRightVaxData()"
     }
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var vaxDataViewModel: VaxDataViewModel
     private lateinit var initialLoadingDialog: AlertDialog
     private var needInternetDialog: AlertDialog? = null
+    private var wasInternetConnected = true
 
+    //TODO handle rotation
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -54,13 +60,17 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
 
         LudScheduler.appContext = applicationContext
         LudScheduler.viewModel = vaxDataViewModel
-        LudScheduler.subscribe(this)
+        LudScheduler.subscriber = this
 
         showInitialLoadingDialog()
         setLiveDataObservers()
         setOnClickListeners()
 
-        LudScheduler.scheduleUpdate()
+        if(savedInstanceState == null) {
+            LudScheduler.scheduleUpdate()
+        } else {
+            binding.refreshFab.isEnabled = savedInstanceState.getBoolean(WAS_INTERNET_CONNECTED_KEY)
+        }
     }
 
     private fun setOnClickListeners() {
@@ -218,6 +228,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(ALREADY_STARTED_KEY, true)
+        outState.putBoolean(WAS_INTERNET_CONNECTED_KEY, wasInternetConnected)
     }
 
     private fun showInitialLoadingDialog() {
@@ -255,58 +266,61 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     override fun onDestroy() {
         super.onDestroy()
         LudScheduler.cancelCoros()
-        LudScheduler.unsubscribe(this)
-    }
-
-    // TODO handle rotation update request && activate/deactivate FAB button
-    override fun onSchedulingResult(
-        performedScheduling: Boolean,
-        ludErr: VaxDataViewModel.LudError
-    ) {
-        val shprefs = getSharedPreferences(SHPREFS, MODE_PRIVATE)
-        if(performedScheduling) {
-            if(ludErr == VaxDataViewModel.LudError.NO_CONNECTIVITY) {
-                Log.e("MFCoVaXt", "update request no conn")
-                if (shprefs.getBoolean(FIRST_TIME_KEY, true)) {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        dismissDialogIfShowing()
-                        needInternetDialog = AlertDialog.Builder(this@MainActivity)
-                                .setTitle(R.string.need_internet)
-                                .setMessage(R.string.no_data_need_internet)
-                                .setCancelable(false)
-                                .setNeutralButton(R.string.exit_app)
-                                { _: DialogInterface, _: Int -> killProcess(myPid()) }
-                                .create()
-                        needInternetDialog!!.show()
-                    }
-                } else {
-                    populateRightVaxData()
-                }
-            } else if(ludErr == VaxDataViewModel.LudError.UPDATE_IN_PROGRESS) {
-                Log.e("MFCoVaXt", "update request update in progress")
-                Toast.makeText(this, R.string.update_in_progress, Toast.LENGTH_SHORT).show()
-            } else {
-                Log.e("MFCoVaXt", "update request ok")
-                if(needInternetDialog != null && needInternetDialog?.isShowing == true) {
-                    needInternetDialog!!.dismiss()
-                }
-                populateRightVaxData()
-                shprefs.edit().putBoolean(FIRST_TIME_KEY, false).apply()
-            }
-        } else {
-            Log.e("MFCoVaXt", "update feature deactivated due to missing internet connection")
-        }
+        LudScheduler.cancelAllWork()
     }
 
     private fun populateRightVaxData() {
-        val hereVolleyErrorMsg = "MainActivity.populateRightVaxData"
         vaxDataViewModel.populateVaxData(
                 VaxDataViewModel.VaxData.VAX_INJECTIONS, applicationContext
         ) { volleyErrorHandler(this, it,
-                "$hereVolleyErrorMsg [VaxInjections]") }
+                "$VOLLEY_ERROR_MYMSG [VaxInjections]") }
         vaxDataViewModel.populateVaxData(
                 VaxDataViewModel.VaxData.VAX_STATS_SUMMARIES_BY_AREA, applicationContext
         ) { volleyErrorHandler(this, it,
-                "$hereVolleyErrorMsg [VaxStatsSummariesByArea]") }
+                "$VOLLEY_ERROR_MYMSG [VaxStatsSummariesByArea]") }
+    }
+
+    override fun onLsuUpdateOk(lsuSync: Boolean, dataSync: Boolean) {
+        wasInternetConnected = true
+        if(needInternetDialog != null && needInternetDialog?.isShowing == true) {
+            needInternetDialog!!.dismiss()
+        }
+
+        populateRightVaxData()
+        getSharedPreferences(SHPREFS, MODE_PRIVATE).edit().putBoolean(FIRST_TIME_KEY, false).apply()
+        val msg = if(lsuSync && dataSync) R.string.everything_up_to_date
+            else if(lsuSync && !dataSync) R.string.lsu_up_to_date_maybe_no_data
+            else R.string.new_data_available
+        showSnackbar(msg)
+        binding.refreshFab.isEnabled = true
+    }
+
+    override fun onLsuUpdateInProgress() {
+        showSnackbar(R.string.an_lsu_update_already_in_progress)
+        binding.refreshFab.isEnabled = false
+    }
+
+    override fun onLsuUpdateNoConnectivity() {
+        wasInternetConnected = false
+        if (getSharedPreferences(SHPREFS, MODE_PRIVATE).getBoolean(FIRST_TIME_KEY, true)) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
+            dismissDialogIfShowing()
+            needInternetDialog = AlertDialog.Builder(this@MainActivity)
+                    .setTitle(R.string.need_internet)
+                    .setMessage(R.string.no_data_need_internet)
+                    .setCancelable(false)
+                    .setNeutralButton(R.string.exit_app)
+                    { _: DialogInterface, _: Int -> killProcess(myPid()) }
+                    .create()
+            needInternetDialog!!.show()
+        } else {
+            populateRightVaxData()
+            showSnackbar(R.string.could_not_detect_internet_conn)
+            binding.refreshFab.isEnabled = false
+        }
+    }
+
+    private fun showSnackbar(strId: Int) {
+        Snackbar.make(binding.rootCl, strId, Snackbar.LENGTH_SHORT).show()
     }
 }

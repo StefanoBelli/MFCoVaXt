@@ -1,26 +1,26 @@
 package it.mobileflow.mfcovaxt.scheduler
 
 import android.content.Context
+import android.util.Log
 import androidx.work.*
 import it.mobileflow.mfcovaxt.util.volleyErrorHandler
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
+import it.mobileflow.mfcovaxt.R
 
 
 object LudScheduler {
     private const val UNIQUE_WORK_NAME = "auto_ludsched"
+    private const val VOLLEY_ERROR_MYMSG = "LudScheduler.scheduleUpdate()"
     private var ludSchedulerScope = CoroutineScope(Dispatchers.Default)
-    //
-    // TODO SINGLE SUBSCRIBER
-    //
-    private var subscribers = mutableListOf<LudSchedulerSubscriber>()
 
     /*
      * properties that must be changed explicitly from client
      */
     lateinit var viewModel : VaxDataViewModel
     lateinit var appContext : Context
+    lateinit var subscriber : LudSchedulerSubscriber
 
     /*
      * !!! public property that shall *not* be changed !!! (see ScheduleUpdateWorker)
@@ -30,36 +30,35 @@ object LudScheduler {
     fun scheduleUpdate() {
         ludSchedulerScope.launch {
             if (canUpdateBecauseOnlineYouShouldNotChangeThis) {
-                when(
-                    viewModel.lastUpdateDataset(appContext,
-                    { notifyAllSubscribers(true, VaxDataViewModel.LudError.OK) },
-                    { volleyErrorHandler(appContext, it, "LudScheduler.scheduleUpdate()") })
-                ) {
+                when(viewModel.lastUpdateDataset(appContext,
+                    { ls: Boolean, ds: Boolean -> subscriber.onLsuUpdateOk(ls, ds) }, //Dispatched using Main thread pool
+                    { volleyErrorHandler(appContext, it, VOLLEY_ERROR_MYMSG) })) {
+
                     VaxDataViewModel.LudError.OK -> {
                         enqueueOtwrByTimeConstraint(true)
                     }
                     VaxDataViewModel.LudError.UPDATE_IN_PROGRESS -> {
                         enqueueOtwrByTimeConstraint(false)
-                        notifyAllSubscribers(true, VaxDataViewModel.LudError.UPDATE_IN_PROGRESS)
+                        withContext(Dispatchers.Main) {
+                            subscriber.onLsuUpdateInProgress()
+                        }
                     }
                     VaxDataViewModel.LudError.NO_CONNECTIVITY ->  {
                         enqueueOtwrByConnectivityChangeConstraint()
                         canUpdateBecauseOnlineYouShouldNotChangeThis = false
-                        notifyAllSubscribers(true, VaxDataViewModel.LudError.NO_CONNECTIVITY)
+                        withContext(Dispatchers.Main) {
+                            subscriber.onLsuUpdateNoConnectivity()
+                        }
                     }
                 }
-            } else {
-                notifyAllSubscribers(false, VaxDataViewModel.LudError.NO_CONNECTIVITY)
             }
         }
     }
 
-    fun subscribe(subscriber : LudSchedulerSubscriber) {
-        subscribers.add(subscriber)
-    }
-
-    fun unsubscribe(subscriber : LudSchedulerSubscriber) {
-        subscribers.remove(subscriber)
+    fun cancelAllWork() {
+        WorkManager
+                .getInstance(appContext)
+                .cancelAllWork()
     }
 
     fun cancelCoros() {
@@ -85,11 +84,5 @@ object LudScheduler {
     private fun enqueueOtwrByConnectivityChangeConstraint() {
         enqueueWorkRequest(OneTimeWorkRequestBuilder<ScheduleUpdateWorker>().setConstraints(
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build())
-    }
-
-    private fun notifyAllSubscribers(ps: Boolean, le: VaxDataViewModel.LudError) {
-        for(subscriber in subscribers) {
-            subscriber.onSchedulingResult(ps, le)
-        }
     }
 }

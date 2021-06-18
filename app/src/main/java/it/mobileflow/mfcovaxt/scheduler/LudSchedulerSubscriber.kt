@@ -1,9 +1,7 @@
 package it.mobileflow.mfcovaxt.scheduler
 
-import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
-
 interface LudSchedulerSubscriber {
-    fun onSchedulingResult(
-        performedScheduling: Boolean,
-        ludErr: VaxDataViewModel.LudError)
+    fun onLsuUpdateOk(lsuSync: Boolean, dataSync: Boolean)
+    fun onLsuUpdateInProgress()
+    fun onLsuUpdateNoConnectivity()
 }
