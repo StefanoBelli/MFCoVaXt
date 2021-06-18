@@ -75,10 +75,9 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         }
 
         binding.totInjByAgeRangeBtn.setOnClickListener {
-            val gson = Gson()
             val intent = Intent(this, InjectionsByAgeRangeActivity::class.java)
             intent.putExtra(YOUR_DATA_KEY,
-                gson.toJson(vaxDataViewModel.vaxInjectionsSummariesByAgeRange.value))
+                Gson().toJson(vaxDataViewModel.vaxInjectionsSummariesByAgeRange.value))
             startActivity(intent)
         }
 

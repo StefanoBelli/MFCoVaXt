@@ -72,7 +72,7 @@ class InjectionsByAgeRangeActivity : AppCompatActivity() {
         dataset.highLightAlpha = 0
 
         val data = BarData(dataset)
-        data.barWidth = 0.9f
+        data.barWidth = 0.8f
         chart.data = data
         chart.invalidate()
     }
