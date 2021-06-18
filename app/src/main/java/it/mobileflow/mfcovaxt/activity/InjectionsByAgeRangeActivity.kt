@@ -10,9 +10,11 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.snackbar.Snackbar
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.databinding.ActivityInjectionsByAgeRangeBinding
 import it.mobileflow.mfcovaxt.factory.VaxDataViewModelFactory
+import it.mobileflow.mfcovaxt.scheduler.LudScheduler
 import it.mobileflow.mfcovaxt.scheduler.LudSchedulerSubscriber
 import it.mobileflow.mfcovaxt.util.volleyErrorHandler
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
@@ -24,7 +26,7 @@ class InjectionsByAgeRangeActivity : AppCompatActivity(), LudSchedulerSubscriber
     private lateinit var binding: ActivityInjectionsByAgeRangeBinding
     private lateinit var vaxDataViewModel: VaxDataViewModel
 
-    //TODO handle screen rotation + update
+    //TODO handle screen rotation + already disabled fab button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInjectionsByAgeRangeBinding.inflate(layoutInflater)
@@ -33,10 +35,19 @@ class InjectionsByAgeRangeActivity : AppCompatActivity(), LudSchedulerSubscriber
         vaxDataViewModel = ViewModelProvider(this, VaxDataViewModelFactory.getInstance())
             .get(VaxDataViewModel::class.java)
 
+        LudScheduler.subscriber = this
+
+        setOnClickListeners()
         setObserver()
-        populateRightData()
+        populateRightVaxData()
 
         setBarChart(getInjByAgeRangeEntries())
+    }
+
+    private fun setOnClickListeners() {
+        binding.refreshFab.setOnClickListener {
+            LudScheduler.scheduleUpdate()
+        }
     }
 
     private fun setObserver() {
@@ -101,7 +112,8 @@ class InjectionsByAgeRangeActivity : AppCompatActivity(), LudSchedulerSubscriber
         return arr
     }
 
-    private fun populateRightData() {
+    //TODO IF NO CONN THEN SCHEDULE UPDATE()
+    private fun populateRightVaxData() {
         vaxDataViewModel.populateVaxData(
                 VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_AGE_RANGE,
                 applicationContext)
@@ -109,14 +121,25 @@ class InjectionsByAgeRangeActivity : AppCompatActivity(), LudSchedulerSubscriber
     }
 
     override fun onLsuUpdateInProgress() {
-        TODO("Not yet implemented")
+        showSnackbar(R.string.an_lsu_update_already_in_progress)
+        binding.refreshFab.isEnabled = false
     }
 
     override fun onLsuUpdateNoConnectivity() {
-        TODO("Not yet implemented")
+        showSnackbar(R.string.could_not_detect_internet_conn)
+        binding.refreshFab.isEnabled = false
     }
 
     override fun onLsuUpdateOk(lsuSync: Boolean, dataSync: Boolean) {
-        TODO("Not yet implemented")
+        populateRightVaxData()
+        val msg = if(lsuSync && dataSync) R.string.everything_up_to_date
+        else if(lsuSync && !dataSync) R.string.lsu_up_to_date_maybe_no_data
+        else R.string.new_data_available
+        showSnackbar(msg)
+        binding.refreshFab.isEnabled = true
+    }
+
+    private fun showSnackbar(strId: Int) {
+        Snackbar.make(binding.cl, strId, Snackbar.LENGTH_LONG).show()
     }
 }
