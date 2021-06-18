@@ -15,7 +15,6 @@ import it.mobileflow.mfcovaxt.util.EzAppDataUpdateTracker
 import it.mobileflow.mfcovaxt.util.EzDateParser
 import it.mobileflow.mfcovaxt.util.EzNetwork
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.commons.csv.CSVRecord

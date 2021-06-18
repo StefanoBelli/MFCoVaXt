@@ -4,14 +4,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.os.Process.killProcess
 import android.os.Process.myPid
-import android.util.Log
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -28,9 +25,7 @@ import it.mobileflow.mfcovaxt.util.EzNumberFormatting
 import it.mobileflow.mfcovaxt.util.volleyErrorHandler
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import java.util.*
 
@@ -79,7 +74,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         }
 
         binding.totInjByAgeRangeBtn.setOnClickListener {
-            startActivity(Intent(this, InjectionsByAgeRangeActivity::class.java))
+            startActivity(Intent(this, InjectionsByAgeRangeActivity::class.java)) //TODO RESET AS UNIQUE SUBSCRIBER
         }
 
         binding.injLocationsBtn.setOnClickListener {
