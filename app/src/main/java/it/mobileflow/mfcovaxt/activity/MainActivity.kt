@@ -1,6 +1,7 @@
 package it.mobileflow.mfcovaxt.activity
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         }
 
         binding.totInjByAgeRangeBtn.setOnClickListener {
-
+            startActivity(Intent(this, InjectionsByAgeRangeActivity::class.java))
         }
 
         binding.injLocationsBtn.setOnClickListener {
