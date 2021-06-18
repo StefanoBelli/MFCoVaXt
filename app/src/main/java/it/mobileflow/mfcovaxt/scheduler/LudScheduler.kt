@@ -11,6 +11,9 @@ import java.util.concurrent.TimeUnit
 object LudScheduler {
     private const val UNIQUE_WORK_NAME = "auto_ludsched"
     private var ludSchedulerScope = CoroutineScope(Dispatchers.Default)
+    //
+    // TODO SINGLE SUBSCRIBER
+    //
     private var subscribers = mutableListOf<LudSchedulerSubscriber>()
 
     /*

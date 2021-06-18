@@ -2,6 +2,8 @@ package it.mobileflow.mfcovaxt.activity
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Process.killProcess
+import android.os.Process.myPid
 import android.util.Log
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -23,6 +25,7 @@ import it.mobileflow.mfcovaxt.util.EzNumberFormatting
 import it.mobileflow.mfcovaxt.util.volleyErrorHandler
 import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
@@ -255,6 +258,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         LudScheduler.unsubscribe(this)
     }
 
+    // TODO handle rotation update request && activate/deactivate FAB button
     override fun onSchedulingResult(
         performedScheduling: Boolean,
         ludErr: VaxDataViewModel.LudError
@@ -271,7 +275,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                                 .setMessage(R.string.no_data_need_internet)
                                 .setCancelable(false)
                                 .setNeutralButton(R.string.exit_app)
-                                { _: DialogInterface, _: Int -> finish() }
+                                { _: DialogInterface, _: Int -> killProcess(myPid()) }
                                 .create()
                         needInternetDialog!!.show()
                     }
@@ -280,7 +284,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                 }
             } else if(ludErr == VaxDataViewModel.LudError.UPDATE_IN_PROGRESS) {
                 Log.e("MFCoVaXt", "update request update in progress")
-                Toast.makeText(this,R.string.update_in_progress, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.update_in_progress, Toast.LENGTH_SHORT).show()
             } else {
                 Log.e("MFCoVaXt", "update request ok")
                 if(needInternetDialog != null && needInternetDialog?.isShowing == true) {
@@ -289,6 +293,8 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                 populateRightVaxData()
                 shprefs.edit().putBoolean(FIRST_TIME_KEY, false).apply()
             }
+        } else {
+            Log.e("MFCoVaXt", "update feature deactivated due to missing internet connection")
         }
     }
 
