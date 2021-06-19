@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">MFCoVaXt</string>
-    <string name="coccarda">Coccarda</string>
+    <string name="app_name" translatable="false">MFCoVaXt</string>
+    <string name="coccarda" translatable="false">Coccarda</string>
     <string name="report_vax">Anti COVID-19 Vax\nInjections Report</string>
     <string name="last_updated_on_waiting_data">Last updated on: waiting for data…</string>
     <string name="last_updated_on_fmt">Last updated on: %s</string>
-    <string name="meds">Meds</string>
+    <string name="meds" translatable="false">Meds</string>
     <string name="waiting_for_data">Waiting for data…</string>
     <string name="tot_inj">Total injections</string>
     <string name="people">People</string>
@@ -12,34 +12,32 @@
     <string name="tot_inj_by_area">Total injections by area</string>
     <string name="inj_locations">Injection locations</string>
     <string name="view_plots">View plots</string>
-    <string name="more_on_inj_locations">More on injection locations</string>
-    <string name="total_num_inj_locations">Total injection locations</string>
     <string name="area">Area</string>
     <string name="injected">Injected</string>
     <string name="delivered">Delivered</string>
     <string name="percentage">Percentage</string>
-    <string name="abr">Abruzzo</string>
-    <string name="bas">Basilicata</string>
-    <string name="cal">Calabria</string>
-    <string name="cam">Campania</string>
-    <string name="emr">Emilia-Romagna</string>
-    <string name="fvg">Friuli-Venezia Giulia</string>
-    <string name="laz">Lazio</string>
-    <string name="lig">Liguria</string>
-    <string name="lom">Lombardia</string>
-    <string name="mar">Marche</string>
-    <string name="mol">Molise</string>
-    <string name="pie">Piemonte</string>
-    <string name="pug">Puglia</string>
-    <string name="sar">Sardegna</string>
-    <string name="sic">Sicilia</string>
-    <string name="tos">Toscana</string>
-    <string name="umb">Umbria</string>
-    <string name="ven">Veneto</string>
-    <string name="vda">Valle d\'Aosta / Vallée d\'Aoste</string>
+    <string name="abr" translatable="false">Abruzzo</string>
+    <string name="bas" translatable="false">Basilicata</string>
+    <string name="cal" translatable="false">Calabria</string>
+    <string name="cam" translatable="false">Campania</string>
+    <string name="emr" translatable="false">Emilia-Romagna</string>
+    <string name="fvg" translatable="false">Friuli-Venezia Giulia</string>
+    <string name="laz" translatable="false">Lazio</string>
+    <string name="lig" translatable="false">Liguria</string>
+    <string name="lom" translatable="false">Lombardia</string>
+    <string name="mar" translatable="false">Marche</string>
+    <string name="mol" translatable="false">Molise</string>
+    <string name="pie" translatable="false">Piemonte</string>
+    <string name="pug" translatable="false">Puglia</string>
+    <string name="sar" translatable="false">Sardegna</string>
+    <string name="sic" translatable="false">Sicilia</string>
+    <string name="tos" translatable="false">Toscana</string>
+    <string name="umb" translatable="false">Umbria</string>
+    <string name="ven" translatable="false">Veneto</string>
+    <string name="vda" translatable="false">Valle d\'Aosta / Vallée d\'Aoste</string>
     <string name="total">Total</string>
-    <string name="pab">Provincia Autonoma Bolzano / Bozen</string>
-    <string name="pat">Provincia Autonoma Trento</string>
+    <string name="pab" translatable="false">Provincia Autonoma Bolzano / Bozen</string>
+    <string name="pat" translatable="false">Provincia Autonoma Trento</string>
     <string name="loading_data">Loading data</string>
     <string name="please_wait">Please wait while we are loading data…</string>
     <string name="need_internet">Internet connection needed</string>
@@ -49,8 +47,7 @@
     <string name="exit_app">Exit application</string>
     <string name="tot_inj_by_age_range">Total injections by age range</string>
     <string name="volley_error_check_logcat">Unusual Volley HTTP library error, please report logcat!</string>
-    <string name="volley_error_msg_logcat">Unusual volley error: start looking from {}</string>
-    <string name="update_in_progress">An update is already in progress</string>
+    <string name="volley_error_msg_logcat">Unusual Volley error: start looking from {}</string>
     <string name="refresh">Refresh</string>
     <string name="schedule_update_unexpected">Unexpected LudScheduler.scheduleUpdate() request, cannot perform scheduling right now! [OFFLINE]</string>
     <string name="everything_up_to_date">Nothing new to see, everything is up-to-date!</string>
@@ -61,7 +58,7 @@
     <string name="type">Type</string>
     <string name="province">Province</string>
     <string name="filter_by_area">Filter by area</string>
-    <string name="ok">OK</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="filter_message">Select the area to show vax injection locations</string>
     <string name="italy">Italy</string>
     <string name="first_injs">First injections</string>
