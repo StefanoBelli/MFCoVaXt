@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.DataPlotActivity">
+
+        <Spinner
+            android:id="@+id/byAgeRangeSpinner"
+            android:layout_width="154dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/plotLc" />
+
+        <Spinner
+            android:id="@+id/byVaxSpinner"
+            android:layout_width="154dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="232dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/plotLc" />
+
+        <Spinner
+            android:id="@+id/byAreaSpinner"
+            android:layout_width="154dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="400dp"
+            android:entries="@array/areas"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/plotLc" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/plotLc"
+            android:layout_width="715dp"
+            android:layout_height="316dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/dataTypeSpinner"
+            android:layout_width="154dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="568dp"
+            android:entries="@array/data_plot_type"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/plotLc" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

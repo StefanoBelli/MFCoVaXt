@@ -64,6 +64,10 @@
     <string name="ok">OK</string>
     <string name="filter_message">Select the area to show vax injection locations</string>
     <string name="italy">Italy</string>
+    <string name="first_injs">First injections</string>
+    <string name="second_injs">Second injections</string>
+    <string name="vax_availability">Vax availability</string>
+
     <string-array name="areas">
         <item>@string/italy</item>
         <item>@string/abr</item>
@@ -87,5 +91,12 @@
         <item>@string/umb</item>
         <item>@string/vda</item>
         <item>@string/ven</item>
+    </string-array>
+
+    <string-array name="data_plot_type">
+        <item>@string/total</item>
+        <item>@string/first_injs</item>
+        <item>@string/second_injs</item>
+        <item>@string/vax_availability</item>
     </string-array>
 </resources>
