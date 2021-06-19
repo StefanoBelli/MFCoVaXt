@@ -22,7 +22,7 @@
     <string name="bas">Basilicata</string>
     <string name="cal">Calabria</string>
     <string name="cam">Campania</string>
-    <string name="emr">Emilia Romagna</string>
+    <string name="emr">Emilia-Romagna</string>
     <string name="fvg">Friuli-Venezia Giulia</string>
     <string name="laz">Lazio</string>
     <string name="lig">Liguria</string>
@@ -36,10 +36,10 @@
     <string name="tos">Toscana</string>
     <string name="umb">Umbria</string>
     <string name="ven">Veneto</string>
-    <string name="vda">Valle d\'Aosta</string>
+    <string name="vda">Valle d\'Aosta / Vallée d\'Aoste</string>
     <string name="total">Total</string>
-    <string name="pab">P.A. Bolzano</string>
-    <string name="pat">P.A. Trento</string>
+    <string name="pab">Provincia Autonoma Bolzano / Bozen</string>
+    <string name="pat">Provincia Autonoma Trento</string>
     <string name="loading_data">Loading data</string>
     <string name="please_wait">Please wait while we are loading data…</string>
     <string name="need_internet">Internet connection needed</string>
@@ -57,4 +57,35 @@
     <string name="new_data_available">New data available!</string>
     <string name="could_not_detect_internet_conn">Could not detect internet connection</string>
     <string name="an_lsu_update_already_in_progress">An update check is already in progress</string>
+    <string name="phy_inj_location">Physical injection location</string>
+    <string name="type">Type</string>
+    <string name="province">Province</string>
+    <string name="filter_by_area">Filter by area</string>
+    <string name="ok">OK</string>
+    <string name="filter_message">Select the area to show vax injection locations</string>
+    <string name="italy">Italy</string>
+    <string-array name="areas">
+        <item>@string/italy</item>
+        <item>@string/abr</item>
+        <item>@string/bas</item>
+        <item>@string/cal</item>
+        <item>@string/cam</item>
+        <item>@string/emr</item>
+        <item>@string/fvg</item>
+        <item>@string/laz</item>
+        <item>@string/lig</item>
+        <item>@string/lom</item>
+        <item>@string/mar</item>
+        <item>@string/mol</item>
+        <item>@string/pab</item>
+        <item>@string/pat</item>
+        <item>@string/pie</item>
+        <item>@string/pug</item>
+        <item>@string/sar</item>
+        <item>@string/sic</item>
+        <item>@string/tos</item>
+        <item>@string/umb</item>
+        <item>@string/vda</item>
+        <item>@string/ven</item>
+    </string-array>
 </resources>

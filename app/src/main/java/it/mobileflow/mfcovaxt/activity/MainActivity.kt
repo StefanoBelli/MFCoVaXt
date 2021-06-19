@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.Process.killProcess
 import android.os.Process.myPid
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -15,11 +16,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
+import it.mobileflow.mfcovaxt.entity.PhysicalInjectionLocation
 import it.mobileflow.mfcovaxt.entity.VaxInjectionsSummaryByAgeRange
+import it.mobileflow.mfcovaxt.holder.DataHolder
 import it.mobileflow.mfcovaxt.scheduler.LudScheduler
 import it.mobileflow.mfcovaxt.scheduler.LudSchedulerSubscriber
 import it.mobileflow.mfcovaxt.util.EzDateParser
@@ -38,7 +40,6 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         private const val FIRST_TIME_KEY = "first_time"
         private const val SHPREFS = "it.mobileflow.mfcovaxt_rand493872414267186"
         private const val VOLLEY_ERROR_MYMSG = "MainActivity.populateRightVaxData()"
-        const val YOUR_DATA_KEY = "your_data"
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -75,18 +76,15 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         }
 
         binding.totInjByAgeRangeBtn.setOnClickListener {
-            val intent = Intent(this, InjectionsByAgeRangeActivity::class.java)
-            intent.putExtra(YOUR_DATA_KEY,
-                Gson().toJson(vaxDataViewModel.vaxInjectionsSummariesByAgeRange.value))
-            startActivity(intent)
+            launchActivity(InjectionsByAgeRangeActivity::class.java)
         }
 
         binding.injLocationsBtn.setOnClickListener {
-
+            launchActivity(InjectionLocationActivity::class.java)
         }
 
         binding.plotBtn.setOnClickListener {
-
+            launchActivity(DataPlotActivity::class.java)
         }
     }
 
@@ -99,7 +97,6 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         })
 
         vaxDataViewModel.vaxInjections.observe(this, {
-            binding.plotBtn.isEnabled = true
             lifecycleScope.launch(Dispatchers.Default) {
                 setTotalInjsAndTotalVaxed()
             }
@@ -114,12 +111,20 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         })
 
         vaxDataViewModel.physicalInjectionLocations.observe(this, {
+            DataHolder.physicalInjectionLocations = it
             binding.injLocationsBtn.isEnabled = true
             dismissDialogIfShowing()
         })
 
         vaxDataViewModel.vaxInjectionsSummariesByAgeRange.observe(this, {
+            DataHolder.vaxInjectionsSummaryByAgeRanges = it
             binding.totInjByAgeRangeBtn.isEnabled = true
+            dismissDialogIfShowing()
+        })
+
+        vaxDataViewModel.vaxInjectionsSummariesByDayAndArea.observe(this, {
+            DataHolder.vaxInjectionsSummaryByDayAndAreas = it
+            binding.plotBtn.isEnabled = true
             dismissDialogIfShowing()
         })
     }
@@ -289,7 +294,11 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         vaxDataViewModel.populateVaxData(
             VaxDataViewModel.VaxData.PHYSICAL_INJECTION_LOCATIONS, applicationContext
         ) { volleyErrorHandler(this, it,
-            "$VOLLEY_ERROR_MYMSG [VaxInjectionSummariesByAgeRange]") }
+            "$VOLLEY_ERROR_MYMSG [PhysicalInjectionLocations]") }
+        vaxDataViewModel.populateVaxData(
+            VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA, applicationContext
+        ) { volleyErrorHandler(this, it,
+            "$VOLLEY_ERROR_MYMSG [VaxInjectionsSummariesByDayAndArea]") }
     }
 
     override fun onLsuUpdateOk(lsuSync: Boolean, dataSync: Boolean) {
@@ -335,5 +344,10 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
 
     private fun showSnackbar(strId: Int) {
         Snackbar.make(binding.sv, strId, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun <T> launchActivity(cls: Class<T>) {
+        val intent = Intent(this, cls)
+        startActivity(intent)
     }
 }

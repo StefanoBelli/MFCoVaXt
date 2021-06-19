@@ -8,10 +8,10 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.google.gson.Gson
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.databinding.ActivityInjectionsByAgeRangeBinding
 import it.mobileflow.mfcovaxt.entity.VaxInjectionsSummaryByAgeRange
+import it.mobileflow.mfcovaxt.holder.DataHolder
 
 class InjectionsByAgeRangeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInjectionsByAgeRangeBinding
@@ -27,8 +27,7 @@ class InjectionsByAgeRangeActivity : AppCompatActivity() {
         binding = ActivityInjectionsByAgeRangeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        data = Gson().fromJson(intent.getStringExtra(MainActivity.YOUR_DATA_KEY),
-            Array<VaxInjectionsSummaryByAgeRange>::class.java)
+        data = DataHolder.vaxInjectionsSummaryByAgeRanges
 
         setBarChart(getInjByAgeRangeEntries())
     }

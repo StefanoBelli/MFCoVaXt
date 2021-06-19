@@ -13,7 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MFCoVaXt">
         <activity android:name=".activity.InjectionsByAgeRangeActivity" />
-        <activity android:name=".activity.InjectionLocationActivity" />
+        <activity
+            android:name=".activity.InjectionLocationActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.DataPlotActivity"
             android:screenOrientation="landscape" />
