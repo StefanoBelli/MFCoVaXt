@@ -2,19 +2,30 @@ package it.mobileflow.mfcovaxt.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.databinding.ActivityDataPlotBinding
 import it.mobileflow.mfcovaxt.holder.CommonDataHolder
+import it.mobileflow.mfcovaxt.util.EzDateParser
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DataPlotActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDataPlotBinding
+    private val valueFormatter = object : ValueFormatter() {
+        override fun getFormattedValue(value: Float): String {
+            return EzDateParser.fmtLongToOnlyDateStr(value.toLong(), baseContext)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +74,9 @@ class DataPlotActivity : AppCompatActivity() {
         chart.axisLeft.setDrawLabels(true)
         chart.axisRight.setDrawLabels(false)
         chart.xAxis.setDrawAxisLine(false)
+        chart.xAxis.valueFormatter = valueFormatter
         chart.setScaleEnabled(false)
-        chart.animateY(2000)
+        chart.animateX(2000)
         chart.setNoDataText(getString(R.string.waiting_for_data))
         chart.isHighlightPerDragEnabled = false
         chart.defaultFocusHighlightEnabled = false
@@ -86,7 +98,28 @@ class DataPlotActivity : AppCompatActivity() {
         return adapter
     }
 
-    private fun updatePlot(dataIndex: Int, areaIndex: Int, ageRangeIndex: Int, vaxIndex: Int) {
+    private fun updatePlot(dataIndex: Int, area: Int, ageRange: String, vax: String) {
+        when(dataIndex) {
+            0 -> updatePlotTotalInjsData(area, ageRange, vax)
+            1 -> updatePlotFirstInjsData(area, ageRange, vax)
+            2 -> updatePlotSecondInjsData(area, ageRange, vax)
+            3 -> updatePlotVaxDeliveryData(area, vax)
+        }
+    }
+
+    private fun updatePlotVaxDeliveryData(area: Int, vax: String) {
+
+    }
+
+    private fun updatePlotSecondInjsData(area: Int, ageRange: String, vax: String) {
+
+    }
+
+    private fun updatePlotFirstInjsData(area: Int, ageRange: String, vax: String) {
+
+    }
+
+    private fun updatePlotTotalInjsData(area: Int, ageRange: String, vax: String) {
 
     }
 
@@ -95,8 +128,8 @@ class DataPlotActivity : AppCompatActivity() {
             updatePlot(
                 binding.dataTypeSpinner.selectedItemPosition,
                 binding.byAreaSpinner.selectedItemPosition,
-                binding.byAgeRangeSpinner.selectedItemPosition,
-                binding.byVaxSpinner.selectedItemPosition)
+                (binding.byAgeRangeSpinner.selectedView as TextView).text.toString(),
+                (binding.byVaxSpinner.selectedView as TextView).text.toString())
         }
 
         override fun onNothingSelected(parent: AdapterView<*>?) {}
