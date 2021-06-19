@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="report_vax">Report vaccini anti COVID-19</string>
-    <string name="last_updated_on_waiting_data">Ultimo aggiornamento: attesa dei dati...</string>
+    <string name="last_updated_on_waiting_data">Ultimo aggiornamento: attesa dei dati…</string>
     <string name="last_updated_on_fmt">Ultimo aggiornamento: %s</string>
     <string name="waiting_for_data">Attesa dei dati</string>
     <string name="tot_inj">Totale somministrazioni</string>
     <string name="people">Persone</string>
-    <string name="tot_vaxed">Popolazione completamente vaccinata</string>
+    <string name="tot_vaxed">Popolazione vaccinata</string>
     <string name="tot_inj_by_area">Totale Somministrazioni per regione</string>
     <string name="inj_locations">Punti di somministrazione</string>
     <string name="view_plots">Visualizza grafici</string>
@@ -16,14 +16,13 @@
     <string name="percentage">Percentuale</string>
     <string name="total">Totale</string>
     <string name="loading_data">Caricamento dati</string>
-    <string name="please_wait">Per favore attendi mentre carichiamo i dati...</string>
+    <string name="please_wait">Per favore attendi mentre carichiamo i dati…</string>
     <string name="need_internet">Connessione a internet richiesta</string>
     <string name="no_data_need_internet">Abbiamo bisogno di una connessione ad internet attiva e funzionante per scaricare i dati, al momento il database locale è vuoto! Accedi a internet o esci dall\'applicazione.</string>
     <string name="exit_app">Esci dall\'applicazione</string>
     <string name="tot_inj_by_age_range">Iniezioni totali per fasce d\'età</string>
     <string name="volley_error_check_logcat">Errore inaspettato della libreria HTTP Volley, per favore reporta il logcat!</string>
     <string name="volley_error_msg_logcat">Errore inaspettato di Volley: start looking from {}</string>
-    <string name="update_in_progress">Un aggiornamento è già in corso</string>
     <string name="refresh">Aggiorna</string>
     <string name="schedule_update_unexpected">Richiesta inaspettata a LudScheduler.scheduleUpdate(), non è possibile effettuare scheduling ora! [OFFLINE]</string>
     <string name="everything_up_to_date">Niente di nuovo da vedere, tutto è già aggiornato!</string>
