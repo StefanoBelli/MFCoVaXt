@@ -1,11 +1,8 @@
 package it.mobileflow.mfcovaxt.activity
 
 import android.content.DialogInterface
-import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Process
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -15,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.adapter.PhysicalInjectionLocationAdapter
 import it.mobileflow.mfcovaxt.databinding.ActivityInjectionLocationBinding
-import it.mobileflow.mfcovaxt.holder.DataHolder
+import it.mobileflow.mfcovaxt.holder.CommonDataHolder
 
 class InjectionLocationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInjectionLocationBinding
@@ -23,24 +20,24 @@ class InjectionLocationActivity : AppCompatActivity() {
     private val spinnerItemClick = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             currentFiltering = position
-            supportActionBar!!.title = getString(R.string.inj_locations)
+            supportActionBar!!.title =
+                "${getString(R.string.inj_locations)} (${CommonDataHolder.physicalInjectionLocations.size})"
             if(currentFiltering > 0) {
                 val areaName = (view as TextView).text
-                supportActionBar!!.title = "${supportActionBar!!.title} [${areaName}]"
-                binding.rv.adapter = PhysicalInjectionLocationAdapter(
-                    DataHolder.physicalInjectionLocations.filter {
-                        it.areaName == areaName.toString()
-                    }.toTypedArray())
+                val data = CommonDataHolder.physicalInjectionLocations.filter {
+                    it.areaName == areaName.toString()
+                }.toTypedArray()
+
+                supportActionBar!!.title =
+                    "${getString(R.string.inj_locations)} (${data.size}) [${areaName}]"
+                binding.rv.adapter = PhysicalInjectionLocationAdapter(data)
             } else {
                 binding.rv.adapter = PhysicalInjectionLocationAdapter(
-                    DataHolder.physicalInjectionLocations)
+                    CommonDataHolder.physicalInjectionLocations)
             }
         }
 
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-
-        }
-
+        override fun onNothingSelected(parent: AdapterView<*>?) {}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,10 +45,12 @@ class InjectionLocationActivity : AppCompatActivity() {
         binding = ActivityInjectionLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val data = CommonDataHolder.physicalInjectionLocations
+
         binding.rv.layoutManager = LinearLayoutManager(this)
-        binding.rv.adapter = PhysicalInjectionLocationAdapter(DataHolder.physicalInjectionLocations)
+        binding.rv.adapter = PhysicalInjectionLocationAdapter(data)
         setSupportActionBar(binding.tb)
-        supportActionBar!!.title = getString(R.string.inj_locations)
+        supportActionBar!!.title = "${getString(R.string.inj_locations)} (${data.size})"
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

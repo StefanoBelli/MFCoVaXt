@@ -13,15 +13,12 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
-import it.mobileflow.mfcovaxt.entity.PhysicalInjectionLocation
-import it.mobileflow.mfcovaxt.entity.VaxInjectionsSummaryByAgeRange
-import it.mobileflow.mfcovaxt.holder.DataHolder
+import it.mobileflow.mfcovaxt.holder.CommonDataHolder
 import it.mobileflow.mfcovaxt.scheduler.LudScheduler
 import it.mobileflow.mfcovaxt.scheduler.LudSchedulerSubscriber
 import it.mobileflow.mfcovaxt.util.EzDateParser
@@ -47,6 +44,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     private lateinit var initialLoadingDialog: AlertDialog
     private var needInternetDialog: AlertDialog? = null
     private var wasInternetConnected = true
+    private var plotBtnEnableCnt = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +99,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                 setTotalInjsAndTotalVaxed()
             }
             dismissDialogIfShowing()
+            unlockPlotBtn()
         })
 
         vaxDataViewModel.vaxStatsSummariesByArea.observe(this, {
@@ -111,21 +110,33 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         })
 
         vaxDataViewModel.physicalInjectionLocations.observe(this, {
-            DataHolder.physicalInjectionLocations = it
+            CommonDataHolder.physicalInjectionLocations = it
             binding.injLocationsBtn.isEnabled = true
             dismissDialogIfShowing()
         })
 
         vaxDataViewModel.vaxInjectionsSummariesByAgeRange.observe(this, {
-            DataHolder.vaxInjectionsSummaryByAgeRanges = it
+            CommonDataHolder.vaxInjectionsSummaryByAgeRanges = it
             binding.totInjByAgeRangeBtn.isEnabled = true
+            lifecycleScope.launch(Dispatchers.Default) {
+                CommonDataHolder.ageRanges = setOf()
+                for (summaryByAgeRange in it) {
+                    CommonDataHolder.ageRanges += summaryByAgeRange.ageRange
+                }
+            }
             dismissDialogIfShowing()
         })
 
-        vaxDataViewModel.vaxInjectionsSummariesByDayAndArea.observe(this, {
-            DataHolder.vaxInjectionsSummaryByDayAndAreas = it
-            binding.plotBtn.isEnabled = true
+        vaxDataViewModel.vaxDeliveries.observe(this, {
+            CommonDataHolder.vaxDeliveries = it
             dismissDialogIfShowing()
+            lifecycleScope.launch(Dispatchers.Default)  {
+                CommonDataHolder.vaxes = setOf()
+                for (vax in it) {
+                    CommonDataHolder.vaxes += vax.vaxName
+                }
+            }
+            unlockPlotBtn()
         })
     }
 
@@ -296,9 +307,9 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         ) { volleyErrorHandler(this, it,
             "$VOLLEY_ERROR_MYMSG [PhysicalInjectionLocations]") }
         vaxDataViewModel.populateVaxData(
-            VaxDataViewModel.VaxData.VAX_INJECTIONS_SUMMARIES_BY_DAY_AND_AREA, applicationContext
+            VaxDataViewModel.VaxData.VAX_DELIVERIES, applicationContext
         ) { volleyErrorHandler(this, it,
-            "$VOLLEY_ERROR_MYMSG [VaxInjectionsSummariesByDayAndArea]") }
+            "$VOLLEY_ERROR_MYMSG [VaxDeliveries]") }
     }
 
     override fun onLsuUpdateOk(lsuSync: Boolean, dataSync: Boolean) {
@@ -349,5 +360,15 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     private fun <T> launchActivity(cls: Class<T>) {
         val intent = Intent(this, cls)
         startActivity(intent)
+    }
+
+    private fun unlockPlotBtn() {
+        if(plotBtnEnableCnt > 0) {
+            if (plotBtnEnableCnt == 1) {
+                binding.plotBtn.isEnabled = true
+            }
+
+            plotBtnEnableCnt--
+        }
     }
 }

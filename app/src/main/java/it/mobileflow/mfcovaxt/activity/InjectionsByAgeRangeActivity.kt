@@ -11,7 +11,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.databinding.ActivityInjectionsByAgeRangeBinding
 import it.mobileflow.mfcovaxt.entity.VaxInjectionsSummaryByAgeRange
-import it.mobileflow.mfcovaxt.holder.DataHolder
+import it.mobileflow.mfcovaxt.holder.CommonDataHolder
 
 class InjectionsByAgeRangeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInjectionsByAgeRangeBinding
@@ -27,7 +27,7 @@ class InjectionsByAgeRangeActivity : AppCompatActivity() {
         binding = ActivityInjectionsByAgeRangeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        data = DataHolder.vaxInjectionsSummaryByAgeRanges
+        data = CommonDataHolder.vaxInjectionsSummaryByAgeRanges
 
         setBarChart(getInjByAgeRangeEntries())
     }
