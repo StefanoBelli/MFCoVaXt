@@ -9,6 +9,7 @@ import android.os.Process.myPid
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -63,7 +64,8 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         if(savedInstanceState == null) {
             LudScheduler.scheduleUpdate()
         } else {
-            binding.refreshFab.isEnabled = savedInstanceState.getBoolean(WAS_INTERNET_CONNECTED_KEY)
+            wasInternetConnected = savedInstanceState.getBoolean(WAS_INTERNET_CONNECTED_KEY)
+            binding.refreshFab.isEnabled = wasInternetConnected
         }
     }
 
