@@ -8,11 +8,14 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.adapter.PhysicalInjectionLocationAdapter
 import it.mobileflow.mfcovaxt.databinding.ActivityInjectionLocationBinding
 import it.mobileflow.mfcovaxt.holder.CommonDataHolder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class InjectionLocationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInjectionLocationBinding
@@ -23,14 +26,16 @@ class InjectionLocationActivity : AppCompatActivity() {
             supportActionBar!!.title =
                 "${getString(R.string.inj_locations)} (${CommonDataHolder.physicalInjectionLocations.size})"
             if(currentFiltering > 0) {
-                val areaName = (view as TextView).text
-                val data = CommonDataHolder.physicalInjectionLocations.filter {
-                    it.areaName == areaName.toString()
-                }.toTypedArray()
+                lifecycleScope.launch(Dispatchers.Default) {
+                    val areaName = (view as TextView).text
+                    val data = CommonDataHolder.physicalInjectionLocations.filter {
+                        it.areaName == areaName.toString()
+                    }.toTypedArray()
 
-                supportActionBar!!.title =
-                    "${getString(R.string.inj_locations)} (${data.size}) [${areaName}]"
-                binding.rv.adapter = PhysicalInjectionLocationAdapter(data)
+                    supportActionBar!!.title =
+                        "${getString(R.string.inj_locations)} (${data.size}) [${areaName}]"
+                    binding.rv.adapter = PhysicalInjectionLocationAdapter(data)
+                }
             } else {
                 binding.rv.adapter = PhysicalInjectionLocationAdapter(
                     CommonDataHolder.physicalInjectionLocations)

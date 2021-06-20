@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.Process.killProcess
 import android.os.Process.myPid
-import android.util.Log
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -91,54 +90,56 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
             lifecycleScope.launch(Dispatchers.Default) {
                 setLastUpdateDatasetDate()
             }
-            dismissDialogIfShowing()
+            dismissInitialLoadingDialogIfShowing()
         })
 
         vaxDataViewModel.vaxInjections.observe(this, {
             lifecycleScope.launch(Dispatchers.Default) {
                 setTotalInjsAndTotalVaxed()
                 CommonDataHolder.vaxInjections = it
+                unlockPlotBtn()
             }
-            unlockPlotBtn()
-            dismissDialogIfShowing()
+            dismissInitialLoadingDialogIfShowing()
         })
 
         vaxDataViewModel.vaxStatsSummariesByArea.observe(this, {
             lifecycleScope.launch(Dispatchers.Default) {
                 setAreaStatsInjsTable()
             }
-            dismissDialogIfShowing()
+            dismissInitialLoadingDialogIfShowing()
         })
 
         vaxDataViewModel.physicalInjectionLocations.observe(this, {
             CommonDataHolder.physicalInjectionLocations = it
             binding.injLocationsBtn.isEnabled = true
-            dismissDialogIfShowing()
+            dismissInitialLoadingDialogIfShowing()
         })
 
         vaxDataViewModel.vaxInjectionsSummariesByAgeRange.observe(this, {
-            CommonDataHolder.vaxInjectionsSummaryByAgeRanges = it
-            binding.totInjByAgeRangeBtn.isEnabled = true
             lifecycleScope.launch(Dispatchers.Default) {
+                CommonDataHolder.vaxInjectionsSummaryByAgeRanges = it
+                withContext(Dispatchers.Main) {
+                    binding.totInjByAgeRangeBtn.isEnabled = true
+                }
                 CommonDataHolder.ageRanges = setOf()
                 for (summaryByAgeRange in it) {
                     CommonDataHolder.ageRanges += summaryByAgeRange.ageRange
                 }
+                unlockPlotBtn()
             }
-            unlockPlotBtn()
-            dismissDialogIfShowing()
+            dismissInitialLoadingDialogIfShowing()
         })
 
         vaxDataViewModel.vaxDeliveries.observe(this, {
-            CommonDataHolder.vaxDeliveries = it
             lifecycleScope.launch(Dispatchers.Default)  {
+                CommonDataHolder.vaxDeliveries = it
                 CommonDataHolder.vaxes = setOf()
                 for (vax in it) {
                     CommonDataHolder.vaxes += vax.vaxName
                 }
+                unlockPlotBtn()
             }
-            unlockPlotBtn()
-            dismissDialogIfShowing()
+            dismissInitialLoadingDialogIfShowing()
         })
     }
 
@@ -285,7 +286,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         initialLoadingDialog.show()
     }
 
-    private fun dismissDialogIfShowing() {
+    private fun dismissInitialLoadingDialogIfShowing() {
         if(initialLoadingDialog.isShowing) {
             initialLoadingDialog.dismiss()
         }
@@ -337,7 +338,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         wasInternetConnected = false
         if (getSharedPreferences(SHPREFS, MODE_PRIVATE).getBoolean(FIRST_TIME_KEY, true)) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
-            dismissDialogIfShowing()
+            dismissInitialLoadingDialogIfShowing()
             needInternetDialog = AlertDialog.Builder(this@MainActivity)
                     .setTitle(R.string.need_internet)
                     .setMessage(R.string.no_data_need_internet)
@@ -356,7 +357,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     }
 
     private fun showSnackbar(strId: Int) {
-        Snackbar.make(binding.sv, strId, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(binding.sv, strId, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun <T> launchActivity(cls: Class<T>) {
@@ -364,13 +365,15 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         startActivity(intent)
     }
 
-    private fun unlockPlotBtn() {
+    private suspend fun unlockPlotBtn() {
         if(plotBtnEnableCnt > 0) {
             if (plotBtnEnableCnt == 1) {
-                binding.plotBtn.isEnabled = true
+                withContext(Dispatchers.Main) {
+                    binding.plotBtn.isEnabled = true
+                }
             }
 
-            plotBtnEnableCnt--
+            --plotBtnEnableCnt
         }
     }
 }

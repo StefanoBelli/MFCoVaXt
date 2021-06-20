@@ -2,6 +2,7 @@ package it.mobileflow.mfcovaxt.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -12,10 +13,13 @@ import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.databinding.ActivityInjectionsByAgeRangeBinding
 import it.mobileflow.mfcovaxt.entity.VaxInjectionsSummaryByAgeRange
 import it.mobileflow.mfcovaxt.holder.CommonDataHolder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class InjectionsByAgeRangeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInjectionsByAgeRangeBinding
     private lateinit var data: Array<VaxInjectionsSummaryByAgeRange>
+    private lateinit var chart: BarChart
     private val valueFormatter = object : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             return data[value.toInt()].ageRange
@@ -28,13 +32,15 @@ class InjectionsByAgeRangeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         data = CommonDataHolder.vaxInjectionsSummaryByAgeRanges
+        chart = binding.totInjByAgeRangeBc
 
-        setBarChart(getInjByAgeRangeEntries())
+        setBarChart()
+        lifecycleScope.launch(Dispatchers.Default) {
+            applyNewDataset(getInjByAgeRangeEntries())
+        }
     }
 
-    private fun getChart() : BarChart {
-        val chart = binding.totInjByAgeRangeBc
-
+    private fun setBarChart() {
         chart.axisRight.setDrawGridLines(false)
         chart.axisLeft.setDrawGridLines(false)
         chart.xAxis.setDrawGridLines(false)
@@ -59,19 +65,16 @@ class InjectionsByAgeRangeActivity : AppCompatActivity() {
         chart.setScaleEnabled(false)
         chart.animateY(2000)
         chart.setNoDataText(getString(R.string.waiting_for_data))
-
-        return chart
     }
 
-    private fun setBarChart(entries: ArrayList<BarEntry>) {
-        val chart = getChart()
-
+    private fun applyNewDataset(entries: List<BarEntry>) {
         val dataset = BarDataSet(entries, getString(R.string.tot_inj_by_age_range))
         dataset.color = getColor(R.color.blue)
         dataset.highLightAlpha = 0
 
         val data = BarData(dataset)
         data.barWidth = 0.8f
+
         chart.data = data
         chart.invalidate()
     }

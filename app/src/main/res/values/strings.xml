@@ -95,7 +95,7 @@
     </string-array>
 
     <string-array name="data_plot_type">
-        <item>@string/total</item>
+        <item>@string/tot_inj</item>
         <item>@string/first_injs</item>
         <item>@string/second_injs</item>
         <item>@string/vax_availability</item>

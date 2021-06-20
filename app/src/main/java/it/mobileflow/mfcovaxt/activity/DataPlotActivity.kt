@@ -1,16 +1,13 @@
 package it.mobileflow.mfcovaxt.activity
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -22,7 +19,6 @@ import it.mobileflow.mfcovaxt.holder.CommonDataHolder
 import it.mobileflow.mfcovaxt.util.EzDateParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.*
 
 class DataPlotActivity : AppCompatActivity() {
@@ -187,7 +183,7 @@ class DataPlotActivity : AppCompatActivity() {
         }
 
         val plotEntries : MutableList<Entry> = mutableListOf()
-        val secondInjsForDate : MutableMap<Date, Int> = mutableMapOf()
+        val firstInjsForDate : MutableMap<Date, Int> = mutableMapOf()
         var totalFirstInjs = 0
 
         for (date in dates.sorted()) {
@@ -203,8 +199,8 @@ class DataPlotActivity : AppCompatActivity() {
                 totalFirstInjs += it.firstInj
             }
 
-            secondInjsForDate[date] = totalFirstInjs
-            plotEntries.add(Entry(date.time.toFloat(), secondInjsForDate[date]!!.toFloat()))
+            firstInjsForDate[date] = totalFirstInjs
+            plotEntries.add(Entry(date.time.toFloat(), firstInjsForDate[date]!!.toFloat()))
         }
 
         applyNewDataset(R.string.first_injs, plotEntries)
