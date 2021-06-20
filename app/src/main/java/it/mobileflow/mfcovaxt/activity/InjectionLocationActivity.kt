@@ -23,17 +23,14 @@ class InjectionLocationActivity : AppCompatActivity() {
     private val spinnerItemClick = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             currentFiltering = position
-            supportActionBar!!.title =
-                "${getString(R.string.inj_locations)} (${CommonDataHolder.physicalInjectionLocations.size})"
+            supportActionBar!!.subtitle = "${CommonDataHolder.physicalInjectionLocations.size}"
             if(currentFiltering > 0) {
                 lifecycleScope.launch(Dispatchers.Default) {
                     val areaName = (view as TextView).text
                     val data = CommonDataHolder.physicalInjectionLocations.filter {
                         it.areaName == areaName.toString()
                     }.toTypedArray()
-
-                    supportActionBar!!.title =
-                        "${getString(R.string.inj_locations)} (${data.size}) [${areaName}]"
+                    supportActionBar!!.subtitle = "${data.size}, $areaName"
                     binding.rv.adapter = PhysicalInjectionLocationAdapter(data)
                 }
             } else {
@@ -55,7 +52,8 @@ class InjectionLocationActivity : AppCompatActivity() {
         binding.rv.layoutManager = LinearLayoutManager(this)
         binding.rv.adapter = PhysicalInjectionLocationAdapter(data)
         setSupportActionBar(binding.tb)
-        supportActionBar!!.title = "${getString(R.string.inj_locations)} (${data.size})"
+        supportActionBar!!.title = getString(R.string.inj_locations)
+        supportActionBar!!.subtitle = "${data.size}"
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

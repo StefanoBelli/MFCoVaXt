@@ -87,6 +87,8 @@ class DataPlotActivity : AppCompatActivity() {
         chart.xAxis.valueFormatter = valueFormatter
         chart.setScaleEnabled(false)
         chart.setNoDataText(getString(R.string.waiting_for_data))
+        chart.setNoDataTextColor(getColor(R.color.blue))
+        chart.setNoDataTextTypeface(resources.getFont(R.font.titilliumweb_regular))
         chart.isHighlightPerDragEnabled = false
         chart.defaultFocusHighlightEnabled = false
         chart.isHighlightPerTapEnabled = false
