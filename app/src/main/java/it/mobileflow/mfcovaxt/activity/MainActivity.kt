@@ -97,10 +97,10 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         vaxDataViewModel.vaxInjections.observe(this, {
             lifecycleScope.launch(Dispatchers.Default) {
                 setTotalInjsAndTotalVaxed()
+                CommonDataHolder.vaxInjections = it
             }
-            dismissDialogIfShowing()
-            CommonDataHolder.vaxInjections = it
             unlockPlotBtn()
+            dismissDialogIfShowing()
         })
 
         vaxDataViewModel.vaxStatsSummariesByArea.observe(this, {
@@ -114,7 +114,6 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
             CommonDataHolder.physicalInjectionLocations = it
             binding.injLocationsBtn.isEnabled = true
             dismissDialogIfShowing()
-            unlockPlotBtn()
         })
 
         vaxDataViewModel.vaxInjectionsSummariesByAgeRange.observe(this, {
@@ -126,12 +125,12 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                     CommonDataHolder.ageRanges += summaryByAgeRange.ageRange
                 }
             }
+            unlockPlotBtn()
             dismissDialogIfShowing()
         })
 
         vaxDataViewModel.vaxDeliveries.observe(this, {
             CommonDataHolder.vaxDeliveries = it
-            dismissDialogIfShowing()
             lifecycleScope.launch(Dispatchers.Default)  {
                 CommonDataHolder.vaxes = setOf()
                 for (vax in it) {
@@ -139,6 +138,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                 }
             }
             unlockPlotBtn()
+            dismissDialogIfShowing()
         })
     }
 

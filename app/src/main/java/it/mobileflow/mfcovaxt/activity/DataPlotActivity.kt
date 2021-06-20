@@ -175,7 +175,6 @@ class DataPlotActivity : AppCompatActivity() {
             plotEntries.add(Entry(date.time.toFloat(), secondInjsForDate[date]!!.toFloat()))
         }
 
-        Log.e("MFCoVaXt", "${totalSecondInjs}")
         applyNewDataset(R.string.second_injs, plotEntries)
     }
 
@@ -208,8 +207,6 @@ class DataPlotActivity : AppCompatActivity() {
             plotEntries.add(Entry(date.time.toFloat(), secondInjsForDate[date]!!.toFloat()))
         }
 
-
-        Log.e("MFCoVaXt", "${totalFirstInjs}")
         applyNewDataset(R.string.first_injs, plotEntries)
     }
 
@@ -241,8 +238,6 @@ class DataPlotActivity : AppCompatActivity() {
             totalInjsForDate[date] = totalInjs
             plotEntries.add(Entry(date.time.toFloat(), totalInjsForDate[date]!!.toFloat()))
         }
-
-        Log.e("MFCoVaXt", "${totalInjs}")
 
         applyNewDataset(R.string.tot_inj, plotEntries)
     }
