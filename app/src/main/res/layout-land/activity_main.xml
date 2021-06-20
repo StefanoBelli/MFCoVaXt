@@ -484,14 +484,14 @@
                             android:layout_height="match_parent">
 
                             <TextView
+                                tools:ignore="TooManyViews"
                                 android:padding="@dimen/mid_table_data_pad"
                                 android:text="@string/pab" />
 
                             <TextView
                                 android:id="@+id/pabInjTv"
                                 android:padding="@dimen/mid_table_data_pad"
-                                android:text="@string/waiting_for_data"
-                                tools:ignore="TooManyViews" />
+                                android:text="@string/waiting_for_data" />
 
                             <TextView
                                 android:id="@+id/pabDelivTv"
