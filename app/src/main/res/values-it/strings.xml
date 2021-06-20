@@ -48,4 +48,9 @@
     <string name="vax_availability">Disponibilità vaccini</string>
     <string name="all_vaxes">Tutti i vaccini</string>
     <string name="all_ageranges">Tutte le fasce d\'eta</string>
+    <string name="appinfo">Su questa app...</string>
+    <string name="basic_info">Questa app è stata sviluppata dal team Mobile Flow</string>
+    <string name="build_compiled">Build compilata il</string>
+    <string name="build_type">Tipo di build</string>
+    <string name="project_src_link">Codice sorgente del progetto</string>
 </resources>

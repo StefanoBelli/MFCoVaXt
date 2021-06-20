@@ -9,6 +9,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
+        buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
         applicationId "it.mobileflow.mfcovaxt"
         minSdkVersion 27
         targetSdkVersion 30

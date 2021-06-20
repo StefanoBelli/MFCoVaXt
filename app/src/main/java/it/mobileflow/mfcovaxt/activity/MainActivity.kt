@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import it.mobileflow.mfcovaxt.BuildConfig
 import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.database.VaxInjectionsStatsDatabase
 import it.mobileflow.mfcovaxt.databinding.ActivityMainBinding
@@ -27,6 +28,7 @@ import it.mobileflow.mfcovaxt.viewmodel.VaxDataViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         private const val FIRST_TIME_KEY = "first_time"
         private const val SHPREFS = "it.mobileflow.mfcovaxt_rand493872414267186"
         private const val VOLLEY_ERROR_MYMSG = "MainActivity.populateRightVaxData()"
+        private const val DATE_FORMAT = "EEE, d MMM yyyy HH:mm:ss Z"
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -44,11 +47,14 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     private var needInternetDialog: AlertDialog? = null
     private var wasInternetConnected = true
     private var plotBtnEnableCnt = 3
+    private lateinit var infoMsg : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setInfoMsg()
 
         vaxDataViewModel.db = VaxInjectionsStatsDatabase.getInstance(applicationContext)
 
@@ -68,6 +74,16 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
         }
     }
 
+    private fun setInfoMsg() {
+        val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault(Locale.Category.FORMAT))
+        val buildDateTimeFormatBasedOnUserLocale =
+            dateFormat.format(Date(BuildConfig.BUILD_TIMESTAMP))
+        infoMsg = "${getString(R.string.basic_info)}\n\n" +
+                " * ${getString(R.string.project_src_link)}: ${getString(R.string.project_url)}\n" +
+                " * ${getString(R.string.build_compiled)}: ${buildDateTimeFormatBasedOnUserLocale}\n" +
+                " * ${getString(R.string.build_type)}: ${BuildConfig.BUILD_TYPE}"
+    }
+
     private fun setOnClickListeners() {
         binding.refreshFab.setOnClickListener {
             LudScheduler.scheduleUpdate()
@@ -83,6 +99,22 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
 
         binding.plotBtn.setOnClickListener {
             launchActivity(DataPlotActivity::class.java)
+        }
+
+        binding.coccardaIv.setOnLongClickListener {
+
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.appinfo))
+                .setIcon(R.drawable.ic_baseline_info_24)
+                .setCancelable(false)
+                .setMessage(infoMsg)
+                .setPositiveButton(R.string.ok) { actualDialog: DialogInterface, _: Int ->
+                    actualDialog.cancel()
+                }
+                .show() //Dialog
+                .getButton(DialogInterface.BUTTON_POSITIVE)
+                .setTextColor(getColor(R.color.blue))
+            true
         }
     }
 

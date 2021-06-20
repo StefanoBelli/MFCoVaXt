@@ -68,6 +68,12 @@
     <string name="vax_availability">Vax availability</string>
     <string name="all_vaxes">All vaxes</string>
     <string name="all_ageranges">All age ranges</string>
+    <string name="appinfo">About this app…</string>
+    <string name="basic_info">This app was developed by Mobile Flow team</string>
+    <string name="build_compiled">Build compiled on</string>
+    <string name="build_type">Build type</string>
+    <string name="project_src_link">Project source code at</string>
+    <string name="project_url" translatable="false">https://github.com/StefanoBelli/MFCoVaXt</string>
 
     <string-array name="areas">
         <item>@string/italy</item>
