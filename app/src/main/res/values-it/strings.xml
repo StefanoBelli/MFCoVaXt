@@ -3,7 +3,7 @@
     <string name="report_vax">Report Vaccini Anti COVID-19</string>
     <string name="last_updated_on_waiting_data">Ultimo agg.: attesa dei dati…</string>
     <string name="last_updated_on_fmt">Ultimo agg.: %s</string>
-    <string name="waiting_for_data">Attesa dei dati</string>
+    <string name="waiting_for_data">Attesa dei dati…</string>
     <string name="tot_inj">Totale somministrazioni</string>
     <string name="people">Persone</string>
     <string name="tot_vaxed">Popolazione vaccinata</string>
@@ -43,8 +43,8 @@
     <string name="filter_message">Seleziona la regione di cui mostrare
         i punti di somministrazione</string>
     <string name="italy">Italia</string>
-    <string name="first_injs">Prima iniezione</string>
-    <string name="second_injs">Seconda iniezione</string>
+    <string name="first_injs">Prima somministrazione (dosi uniche comprese)</string>
+    <string name="second_injs">Seconda somministrazione</string>
     <string name="vax_availability">Disponibilità vaccini</string>
     <string name="all_vaxes">Tutti i vaccini</string>
     <string name="all_ageranges">Tutte le fasce d\'eta</string>

@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.components.XAxis
@@ -19,6 +20,8 @@ import it.mobileflow.mfcovaxt.R
 import it.mobileflow.mfcovaxt.databinding.ActivityDataPlotBinding
 import it.mobileflow.mfcovaxt.holder.CommonDataHolder
 import it.mobileflow.mfcovaxt.util.EzDateParser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -87,7 +90,6 @@ class DataPlotActivity : AppCompatActivity() {
         chart.xAxis.setDrawAxisLine(false)
         chart.xAxis.valueFormatter = valueFormatter
         chart.setScaleEnabled(false)
-        chart.animateY(2000)
         chart.setNoDataText(getString(R.string.waiting_for_data))
         chart.isHighlightPerDragEnabled = false
         chart.defaultFocusHighlightEnabled = false
@@ -103,12 +105,14 @@ class DataPlotActivity : AppCompatActivity() {
         return adapter
     }
 
-    private fun updatePlot(dataIndex: Int, area: Int, ageRange: String, vax: String?) {
-        when (dataIndex) {
-            0 -> updatePlotTotalInjsData(area, ageRange, vax)
-            1 -> updatePlotFirstInjsData(area, ageRange, vax)
-            2 -> updatePlotSecondInjsData(area, ageRange, vax)
-            3 -> updatePlotVaxDeliveryData(area, vax)
+    private fun updatePlot(dataIndex: Int, area: Int, ageRange: String?, vax: String?) {
+        lifecycleScope.launch(Dispatchers.Default) {
+            when (dataIndex) {
+                0 -> updatePlotTotalInjsData(area, ageRange, vax)
+                1 -> updatePlotFirstInjsData(area, ageRange, vax)
+                2 -> updatePlotSecondInjsData(area, ageRange, vax)
+                3 -> updatePlotVaxDeliveryData(area, vax)
+            }
         }
     }
 
@@ -116,7 +120,7 @@ class DataPlotActivity : AppCompatActivity() {
         val filtered = CommonDataHolder.vaxDeliveries
 
         val dates: MutableSet<Date> = mutableSetOf()
-        for (delivery in CommonDataHolder.vaxDeliveries) {
+        for (delivery in filtered) {
             dates += delivery.deliveryDate
         }
 
@@ -142,16 +146,105 @@ class DataPlotActivity : AppCompatActivity() {
         applyNewDataset(R.string.vax_availability, plotEntries)
     }
 
-    private fun updatePlotSecondInjsData(area: Int, ageRange: String, vax: String?) {
+    private fun updatePlotSecondInjsData(area: Int, ageRange: String?, vax: String?) {
+        val filtered = CommonDataHolder.vaxInjections
 
+        val dates: MutableSet<Date> = mutableSetOf()
+        for (injection in filtered) {
+            dates += injection.injDate
+        }
+
+        val plotEntries : MutableList<Entry> = mutableListOf()
+        val secondInjsForDate : MutableMap<Date, Int> = mutableMapOf()
+        var totalSecondInjs = 0
+
+        for (date in dates.sorted()) {
+            filtered.filter {
+                it.injDate == date
+            }.filter {
+                if(vax != null) it.vaxName == vax else true
+            }.filter {
+                if(area > 0) areas[area] == it.areaName else true
+            }.filter {
+                if(ageRange != null) it.ageRange == ageRange else true
+            }.forEach {
+                totalSecondInjs += it.secondInj
+            }
+
+            secondInjsForDate[date] = totalSecondInjs
+            plotEntries.add(Entry(date.time.toFloat(), secondInjsForDate[date]!!.toFloat()))
+        }
+
+        Log.e("MFCoVaXt", "${totalSecondInjs}")
+        applyNewDataset(R.string.second_injs, plotEntries)
     }
 
-    private fun updatePlotFirstInjsData(area: Int, ageRange: String, vax: String?) {
+    private fun updatePlotFirstInjsData(area: Int, ageRange: String?, vax: String?) {
+        val filtered = CommonDataHolder.vaxInjections
 
+        val dates: MutableSet<Date> = mutableSetOf()
+        for (injection in filtered) {
+            dates += injection.injDate
+        }
+
+        val plotEntries : MutableList<Entry> = mutableListOf()
+        val secondInjsForDate : MutableMap<Date, Int> = mutableMapOf()
+        var totalFirstInjs = 0
+
+        for (date in dates.sorted()) {
+            filtered.filter {
+                it.injDate == date
+            }.filter {
+                if(vax != null) it.vaxName == vax else true
+            }.filter {
+                if(area > 0) areas[area] == it.areaName else true
+            }.filter {
+                if(ageRange != null) it.ageRange == ageRange else true
+            }.forEach {
+                totalFirstInjs += it.firstInj
+            }
+
+            secondInjsForDate[date] = totalFirstInjs
+            plotEntries.add(Entry(date.time.toFloat(), secondInjsForDate[date]!!.toFloat()))
+        }
+
+
+        Log.e("MFCoVaXt", "${totalFirstInjs}")
+        applyNewDataset(R.string.first_injs, plotEntries)
     }
 
-    private fun updatePlotTotalInjsData(area: Int, ageRange: String, vax: String?) {
+    private fun updatePlotTotalInjsData(area: Int, ageRange: String?, vax: String?) {
+        val filtered = CommonDataHolder.vaxInjections
 
+        val dates: MutableSet<Date> = mutableSetOf()
+        for (injection in filtered) {
+            dates += injection.injDate
+        }
+
+        val plotEntries : MutableList<Entry> = mutableListOf()
+        val totalInjsForDate : MutableMap<Date, Int> = mutableMapOf()
+        var totalInjs = 0
+
+        for (date in dates.sorted()) {
+            filtered.filter {
+                it.injDate == date
+            }.filter {
+                if(vax != null) it.vaxName == vax else true
+            }.filter {
+                if(area > 0) areas[area] == it.areaName else true
+            }.filter{
+                if(ageRange != null) it.ageRange == ageRange else true
+            }.forEach {
+                totalInjs += it.firstInj + it.secondInj
+            }
+
+            totalInjsForDate[date] = totalInjs
+            plotEntries.add(Entry(date.time.toFloat(), totalInjsForDate[date]!!.toFloat()))
+        }
+
+        Log.e("MFCoVaXt", "${totalInjs}")
+
+        applyNewDataset(R.string.tot_inj, plotEntries)
     }
 
     private fun applyNewDataset(labelRes: Int, entries: List<Entry>) {
@@ -169,11 +262,10 @@ class DataPlotActivity : AppCompatActivity() {
             updatePlot(
                 binding.dataTypeSpinner.selectedItemPosition,
                 binding.byAreaSpinner.selectedItemPosition,
-                (binding.byAgeRangeSpinner.selectedView as TextView).text.toString(),
-                if(binding.byVaxSpinner.selectedItemPosition == 0)
-                    null
-                else
-                    (binding.byVaxSpinner.selectedView as TextView).text.toString()
+                if(binding.byAgeRangeSpinner.selectedItemPosition == 0) null
+                else (binding.byAgeRangeSpinner.selectedView as TextView).text.toString(),
+                if(binding.byVaxSpinner.selectedItemPosition == 0) null
+                else (binding.byVaxSpinner.selectedView as TextView).text.toString()
             )
         }
 

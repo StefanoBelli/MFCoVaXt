@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
     private lateinit var initialLoadingDialog: AlertDialog
     private var needInternetDialog: AlertDialog? = null
     private var wasInternetConnected = true
-    private var plotBtnEnableCnt = 2
+    private var plotBtnEnableCnt = 3
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +99,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
                 setTotalInjsAndTotalVaxed()
             }
             dismissDialogIfShowing()
+            CommonDataHolder.vaxInjections = it
             unlockPlotBtn()
         })
 
@@ -113,6 +114,7 @@ class MainActivity : AppCompatActivity(), LudSchedulerSubscriber {
             CommonDataHolder.physicalInjectionLocations = it
             binding.injLocationsBtn.isEnabled = true
             dismissDialogIfShowing()
+            unlockPlotBtn()
         })
 
         vaxDataViewModel.vaxInjectionsSummariesByAgeRange.observe(this, {

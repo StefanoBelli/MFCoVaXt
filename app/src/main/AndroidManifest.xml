@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MFCoVaXt">
-        <activity android:name=".activity.InjectionsByAgeRangeActivity" />
+        <activity
+            android:name=".activity.InjectionsByAgeRangeActivity" />
         <activity
             android:name=".activity.InjectionLocationActivity"
             android:screenOrientation="portrait" />
