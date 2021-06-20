@@ -104,7 +104,6 @@ class DataPlotActivity : AppCompatActivity() {
     }
 
     private fun updatePlot(dataIndex: Int, area: Int, ageRange: String, vax: String?) {
-        Log.e("MFCoVaXt", dataIndex.toString())
         when (dataIndex) {
             0 -> updatePlotTotalInjsData(area, ageRange, vax)
             1 -> updatePlotFirstInjsData(area, ageRange, vax)
