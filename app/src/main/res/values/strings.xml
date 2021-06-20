@@ -66,6 +66,8 @@
     <string name="first_injs">First injections</string>
     <string name="second_injs">Second injections</string>
     <string name="vax_availability">Vax availability</string>
+    <string name="all_vaxes">All vaxes</string>
+    <string name="all_ageranges">All age ranges</string>
 
     <string-array name="areas">
         <item>@string/italy</item>

@@ -46,4 +46,6 @@
     <string name="first_injs">Prima iniezione</string>
     <string name="second_injs">Seconda iniezione</string>
     <string name="vax_availability">Disponibilità vaccini</string>
+    <string name="all_vaxes">Tutti i vaccini</string>
+    <string name="all_ageranges">Tutte le fasce d\'eta</string>
 </resources>
