@@ -42,14 +42,16 @@
     <string name="please_wait">Please wait while we are loading data…</string>
     <string name="need_internet">Internet connection needed</string>
     <string name="no_data_need_internet">We need an active and working internet
-        connection to download data, as of now, local database is empty!
+        connection to download data: as of now, local database is empty!
         Turn on your internet connection or exit application.</string>
     <string name="exit_app">Exit application</string>
     <string name="tot_inj_by_age_range">Total injections by age range</string>
-    <string name="volley_error_check_logcat">Unusual Volley HTTP library error, please report logcat!</string>
+    <string name="volley_error_check_logcat">Unusual Volley HTTP library error,
+        please report logcat!</string>
     <string name="volley_error_msg_logcat">Unusual Volley error: start looking from {}</string>
     <string name="refresh">Refresh</string>
-    <string name="schedule_update_unexpected">Unexpected LudScheduler.scheduleUpdate() request, cannot perform scheduling right now! [OFFLINE]</string>
+    <string name="schedule_update_unexpected">Unexpected LudScheduler.scheduleUpdate() request,
+        cannot perform scheduling right now! [OFFLINE]</string>
     <string name="everything_up_to_date">Nothing new to see, everything is up-to-date!</string>
     <string name="new_data_available">New data available!</string>
     <string name="could_not_detect_internet_conn">Could not detect internet connection</string>
