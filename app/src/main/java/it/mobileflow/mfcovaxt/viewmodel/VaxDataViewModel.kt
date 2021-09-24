@@ -349,10 +349,11 @@ class VaxDataViewModel : ViewModel() {
                                         Integer.parseInt(resp[i].get(6)),
                                         Integer.parseInt(resp[i].get(7)),
                                         Integer.parseInt(resp[i].get(8)),
-                                        resp[i].get(9),
+                                        Integer.parseInt(resp[i].get(9)),
                                         resp[i].get(10),
-                                        Integer.parseInt(resp[i].get(11)),
-                                        resp[i].get(12)
+                                        resp[i].get(11),
+                                        Integer.parseInt(resp[i].get(12)),
+                                        resp[i].get(13)
                                 )
                         )
                     }

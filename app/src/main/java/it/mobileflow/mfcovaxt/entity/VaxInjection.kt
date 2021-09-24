@@ -20,6 +20,7 @@ data class VaxInjection (
     val firstInj : Int,
     val secondInj : Int,
     val alreadyInfected : Int,
+    val additionalDose : Int,
     val nuts1Code : String,
     val nuts2Code : String,
     val istatAreaCode : Int,
